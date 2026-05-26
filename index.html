@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#000"/>
+<title>Routines</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root{
+  --bg:#000;--s1:#0a0a0a;--s2:#141414;--s3:#222;
+  --brd:#2a2a2a;--txt:#e8e8e8;--mute:#777;--dim:#555;
+  --pri:#fff;--pri2:#ccc;
+  --r:14px;--r-sm:10px;--sh:0 4px 24px rgba(0,0,0,.5);
+  --sidebar-w:260px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--txt);line-height:1.5;overflow:hidden;height:100vh}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+::selection{background:rgba(255,255,255,.15)}
+
+/* LAYOUT */
+.app{display:flex;height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--s1);border-right:1px solid var(--brd);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;z-index:100;transition:transform .3s ease}
+.sidebar-header{padding:20px;border-bottom:1px solid var(--brd)}
+.sidebar-header h1{font-size:24px;font-weight:800;color:#fff;letter-spacing:1px;font-style:italic}
+.sidebar-header h1 .logo-x{display:inline-block;font-style:italic;transform:skewX(-12deg) scaleY(1.15);margin-left:-1px;position:relative;top:-1px;color:#8b5cf6;text-shadow:0 0 8px rgba(139,92,246,.5)}
+.sidebar-header h1 .logo-x::after{content:"";position:absolute;top:0;left:30%;width:10px;height:100%;pointer-events:none;background:none;clip-path:polygon(60% 0%,100% 0%,40% 42%,80% 42%,0% 100%,30% 55%,0% 55%);background-color:#fff;opacity:.85}
+.sidebar-header p{font-size:12px;color:var(--mute);margin-top:2px}
+.nav-group{padding:12px 10px 4px}
+.nav-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);padding:0 10px;margin-bottom:4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:var(--r-sm);color:var(--mute);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s ease;border:1px solid transparent}
+.nav-item:hover{color:var(--txt);background:var(--s2)}
+.nav-item.active{color:#fff;background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1)}
+.nav-icon{width:18px;text-align:center;font-size:14px;flex-shrink:0}
+.nav-divider{height:1px;background:var(--brd);margin:8px 16px}
+
+.main{flex:1;overflow-y:auto;overflow-x:hidden;padding:28px 36px 60px;position:relative}
+.view{display:none;max-width:960px;animation:fadeUp .35s ease}
+.view.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* MOBILE NAV */
+.mobile-toggle{display:none;position:fixed;top:14px;left:14px;z-index:200;background:var(--s2);border:1px solid var(--brd);color:var(--txt);width:40px;height:40px;border-radius:var(--r-sm);font-size:18px;cursor:pointer}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:90}
+@media(max-width:800px){
+  .sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%);z-index:100}
+  .sidebar.open{transform:none}
+  .overlay.show{display:block}
+  .mobile-toggle{display:flex;align-items:center;justify-content:center}
+  .main{padding:60px 18px 40px}
+}
+
+/* TYPOGRAPHY */
+.view-title{font-size:28px;font-weight:800;margin-bottom:4px}
+.view-sub{color:var(--mute);font-size:14px;margin-bottom:24px}
+h3{font-size:16px;font-weight:700;margin-bottom:8px}
+
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--brd);border-radius:var(--r);padding:18px;box-shadow:var(--sh)}
+.card-grid{display:grid;gap:14px;margin-bottom:20px}
+.card-grid.c2{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.card-grid.c3{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.card p{color:var(--mute);font-size:13px;line-height:1.6}
+.card-accent{border-left:3px solid #fff;background:rgba(255,255,255,.02)}
+.card-ok{border-left:3px solid #666;background:rgba(255,255,255,.02)}
+.card-warn{border-left:3px solid #888;background:rgba(255,255,255,.02)}
+.card-err{border-left:3px solid #555;background:rgba(255,255,255,.02)}
+
+/* TIP BOX */
+.tip-box{background:var(--s2);border:1px solid var(--brd);border-radius:var(--r);padding:16px;margin:16px 0}
+.tip-box h4{font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.tip-box p,.tip-box li{color:var(--mute);font-size:13px;line-height:1.7}
+.tip-box ul{padding-left:18px;margin-top:6px}
+
+/* QUOTE */
+.quote{border-left:3px solid #fff;padding:14px 18px;background:rgba(255,255,255,.02);border-radius:0 var(--r) var(--r) 0;margin:20px 0;font-style:italic;color:var(--mute);font-size:14px}
+.quote strong{color:var(--txt);font-style:normal}
+
+/* SCHEDULE */
+.schedule{display:grid;gap:6px;margin:16px 0}
+.sched-item{display:grid;grid-template-columns:70px 1fr auto;align-items:center;gap:12px;padding:10px 14px;background:var(--s2);border:1px solid var(--brd);border-radius:var(--r-sm);font-size:13px}
+.sched-time{font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
+.sched-dur{color:var(--dim);font-size:11px;font-weight:600}
+.schedule-edit .sched-item{grid-template-columns:22px 100px 1fr auto auto;cursor:grab;user-select:none;transition:opacity .2s,border-color .15s,background .15s}
+.sched-del{background:none;border:1px solid var(--brd);color:var(--dim);width:22px;height:22px;font-size:14px;cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;padding:0;transition:all .15s}
+.sched-del:hover{color:#fff;border-color:#fff}
+.schedule-edit .sched-item:active{cursor:grabbing}
+.sched-time-cell{display:flex;align-items:center;gap:6px}
+.sched-arrows{display:flex;flex-direction:column;gap:2px}
+.sched-arrow{background:none;border:1px solid var(--brd);color:var(--dim);width:20px;height:16px;font-size:9px;cursor:pointer;border-radius:3px;display:flex;align-items:center;justify-content:center;padding:0;transition:all .15s}
+.sched-arrow:hover{color:#fff;border-color:#fff}
+.drag-handle{color:var(--dim);font-size:16px;letter-spacing:-2px;cursor:grab;display:flex;align-items:center;justify-content:center}
+.sched-item.dragging{opacity:.2}
+.sched-item.drag-over-above{border-top:2px solid #fff}
+.sched-item.drag-over-below{border-bottom:2px solid #fff}
+.drop-zone{min-height:40px;border:2px dashed var(--brd);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:12px;margin:4px 0;transition:border-color .15s}
+.drop-zone.drag-over-zone{border-color:#fff;color:#fff}
+.add-sched-row{display:flex;gap:8px;margin-top:8px;align-items:center}
+.add-sched-row .input{flex:1}
+.add-sched-row .input-dur{width:70px;flex:none}
+.add-sched-btn{background:none;border:1px solid var(--brd);color:var(--dim);width:32px;height:32px;border-radius:var(--r-sm);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.add-sched-btn:hover{color:#fff;border-color:#fff}
+
+/* LISTS */
+.task-list{display:grid;gap:6px;margin:12px 0}
+.task-item{display:grid;grid-template-columns:22px 1fr auto;align-items:center;gap:10px;padding:10px 12px;background:var(--s2);border:1px solid var(--brd);border-radius:var(--r-sm);font-size:13px;transition:opacity .2s}
+.task-item.done{opacity:.45}
+.task-item.done span{text-decoration:line-through}
+.task-item input[type=checkbox]{accent-color:#fff;width:16px;height:16px;cursor:pointer}
+.task-item span{cursor:text;outline:none;border-radius:4px;padding:1px 4px}
+.task-item span:focus{background:rgba(255,255,255,.08)}
+.del-btn{background:none;border:none;color:var(--dim);cursor:pointer;font-size:16px;padding:2px 6px;border-radius:4px;transition:color .15s}
+.del-btn:hover{color:#fff}
+
+/* INPUT ROW */
+.input-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.input{background:var(--s2);border:1px solid var(--brd);border-radius:var(--r-sm);color:var(--txt);padding:9px 12px;font-size:13px;font-family:inherit;outline:none;flex:1;min-width:150px;transition:border-color .15s}
+.input:focus{border-color:#fff}
+.input::placeholder{color:var(--dim)}
+.btn{background:#fff;color:#000;border:none;border-radius:var(--r-sm);padding:9px 16px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;transition:filter .15s}
+.btn:hover{filter:brightness(.9)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-ghost{background:var(--s2);border:1px solid var(--brd);color:var(--mute)}
+.btn-ghost:hover{color:var(--txt);border-color:#fff}
+.btn-danger{background:#333;color:#fff}
+
+/* DASHBOARD */
+.dash-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:var(--s1);border:1px solid var(--brd);border-radius:var(--r);padding:18px;text-align:center}
+.stat-num{font-size:36px;font-weight:800;color:#fff}
+.stat-label{font-size:12px;color:var(--mute);margin-top:2px}
+
+/* WEEK GRID */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin:16px 0}
+.week-day{background:var(--s2);border:1px solid var(--brd);border-radius:var(--r-sm);padding:12px 8px;text-align:center;min-height:100px}
+.week-day h4{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#fff;margin-bottom:8px}
+.week-day .task-mini{font-size:11px;color:var(--mute);padding:4px 0;border-bottom:1px solid var(--brd)}
+.week-day .task-mini:last-child{border:none}
+@media(max-width:700px){.week-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* MOODBOARD */
+.moodboard-wrap{position:relative;background:var(--s2);border:1px solid var(--brd);border-radius:var(--r);overflow:hidden;height:500px;cursor:grab;touch-action:none}
+.moodboard-wrap:active{cursor:grabbing}
+.moodboard-canvas{position:absolute;top:0;left:0;transform-origin:0 0;min-width:2000px;min-height:1500px;padding:40px}
+.mood-card{position:absolute;background:var(--s1);border:1px solid var(--brd);border-radius:var(--r);padding:0;width:220px;box-shadow:var(--sh);user-select:none;transition:box-shadow .2s}
+.mood-card:hover{box-shadow:0 8px 32px rgba(255,255,255,.04)}
+.mood-card.mc-dragging{opacity:.7;box-shadow:0 12px 40px rgba(255,255,255,.08);z-index:20}
+.mood-grip{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:grab;border-bottom:1px solid var(--brd);color:var(--dim);font-size:14px;letter-spacing:-2px;border-radius:var(--r) var(--r) 0 0}
+.mood-grip:active{cursor:grabbing;color:#fff}
+.mood-grip .mood-del{background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px;letter-spacing:normal}
+.mood-grip .mood-del:hover{color:#fff}
+.mood-body{padding:12px 16px}
+.mood-card h4{font-size:14px;margin-bottom:6px;outline:none}
+.mood-card p{font-size:12px;color:var(--mute);line-height:1.5;outline:none}
+.zoom-controls{position:absolute;bottom:12px;right:12px;display:flex;gap:6px;z-index:5}
+.zoom-controls button{width:32px;height:32px;border-radius:8px;border:1px solid var(--brd);background:var(--s1);color:var(--txt);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.zoom-controls button:hover{background:var(--s3)}
+
+/* SECTION SPACING */
+.section-gap{margin-top:32px}
+.section-gap-sm{margin-top:20px}
+.mb-12{margin-bottom:12px}
+.mb-20{margin-bottom:20px}
+
+/* PERSON CARD */
+.person-card{display:flex;gap:16px;align-items:flex-start}
+.person-avatar{width:48px;height:48px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;flex-shrink:0;color:#000}
+.person-info h3{margin-bottom:4px}
+.person-info p{font-size:13px;color:var(--mute)}
+
+/* FOOTER */
+.app-footer{padding:16px 20px;border-top:1px solid var(--brd);margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--dim)}
+
+/* TAGS */
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;margin:2px}
+.tag-pri{background:rgba(255,255,255,.1);color:#fff}
+.tag-ok{background:rgba(255,255,255,.06);color:#aaa}
+.tag-warn{background:rgba(255,255,255,.06);color:#999}
+
+/* REMINDER BANNER */
+.reminder-bar{position:fixed;bottom:0;left:var(--sidebar-w);right:0;background:var(--s1);border-top:1px solid var(--brd);padding:12px 24px;display:none;align-items:center;gap:12px;z-index:50;font-size:13px}
+.reminder-bar.show{display:flex}
+.reminder-bar .btn{flex-shrink:0}
+@media(max-width:800px){.reminder-bar{left:0}}
+</style>
+</head>
+<body>
+<div class="app">
+  <button class="mobile-toggle" id="mobileToggle">☰</button>
+  <div class="overlay" id="overlay"></div>
+
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h1>Routine<span class="logo-x">s</span></h1>
+      <p>Werde die beste Version</p>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Planer</div>
+      <div class="nav-item active" data-view="dashboard"><span class="nav-icon">◉</span>Dashboard</div>
+      <div class="nav-item" data-view="tagesplan"><span class="nav-icon">☀</span>Tagesplan</div>
+      <div class="nav-item" data-view="wochenplan"><span class="nav-icon">▦</span>Wochenplan</div>
+      <div class="nav-item" data-view="ziele"><span class="nav-icon">◎</span>Ziele</div>
+      <div class="nav-item" data-view="moodboard"><span class="nav-icon">◫</span>Moodboard</div>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-group">
+      <div class="nav-label">Wissen</div>
+      <div class="nav-item" data-view="angewohnheiten"><span class="nav-icon">✕</span>Angewohnheiten</div>
+      <div class="nav-item" data-view="mindset"><span class="nav-icon">◈</span>Mindset</div>
+      <div class="nav-item" data-view="schlaf"><span class="nav-icon">☾</span>Schlaf</div>
+      <div class="nav-item" data-view="sport"><span class="nav-icon">▲</span>Sport</div>
+      <div class="nav-item" data-view="ernaehrung"><span class="nav-icon">◇</span>Ernährung</div>
+      <div class="nav-item" data-view="skincare"><span class="nav-icon">○</span>Skincare</div>
+      <div class="nav-item" data-view="routine"><span class="nav-icon">►</span>Routine</div>
+      <div class="nav-item" data-view="gamechanger"><span class="nav-icon">★</span>Gamechanger</div>
+      <div class="nav-item" data-view="zeitmanagement"><span class="nav-icon">⊕</span>Zeitmanagement</div>
+      <div class="nav-item" data-view="fokus"><span class="nav-icon">◉</span>Fokus</div>
+      <div class="nav-item" data-view="vorbilder"><span class="nav-icon">♛</span>Vorbilder</div>
+    </div>
+
+    <div class="app-footer">
+      <span id="saveIndicator">Nicht gespeichert</span>
+      <button class="btn btn-sm btn-danger" id="resetBtn">Reset</button>
+    </div>
+  </nav>
+
+  <main class="main" id="main">
+
+    <!-- DASHBOARD -->
+    <div class="view active" id="v-dashboard">
+      <h2 class="view-title">Dashboard</h2>
+      <p class="view-sub">Dein Fortschritt auf einen Blick</p>
+      <div class="dash-stats">
+        <div class="stat-card"><div class="stat-num" id="streakNum">0</div><div class="stat-label">Tage Streak</div></div>
+        <div class="stat-card"><div class="stat-num" id="todayDone">0%</div><div class="stat-label">Heute erledigt</div></div>
+        <div class="stat-card"><div class="stat-num" id="goalsCount">0</div><div class="stat-label">Aktive Ziele</div></div>
+        <div class="stat-card"><div class="stat-num" id="weeklyDone">0%</div><div class="stat-label">Woche erledigt</div></div>
+      </div>
+      <div class="quote">"Man muss die Person schon sein, die man werden möchte." <strong>— Dein Leitprinzip</strong></div>
+      <div style="display:flex;gap:16px;margin-top:20px;align-items:flex-start">
+        <div style="flex:1;min-width:0;display:grid;gap:16px">
+          <div class="card">
+            <h3 class="mb-12">Wochenübersicht</h3>
+            <div class="week-grid" id="dashWeekGrid"></div>
+          </div>
+          <div class="card">
+            <h3 class="mb-12">Heutiger Zeitplan (Vorschau)</h3>
+            <div id="dashSchedulePreview"></div>
+          </div>
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+              <h3 style="margin:0">Gespeicherte Tagesabläufe</h3>
+              <button class="btn btn-sm" id="savePresetBtn">Aktuellen Plan speichern</button>
+            </div>
+            <div id="presetList"></div>
+          </div>
+        </div>
+        <div class="card" style="width:240px;flex-shrink:0;position:sticky;top:20px">
+          <h3 class="mb-12">Notizen</h3>
+          <div id="notesList" class="task-list"></div>
+          <div class="input-row">
+            <input class="input" id="noteInput" placeholder="Neue Notiz" style="min-width:0"/>
+            <button class="btn" id="addNoteBtn">+</button>
+          </div>
+          <div id="todayDate" style="margin-top:16px;font-weight:800;font-style:italic;font-size:14px;color:#fff;border-top:1px solid var(--brd);padding-top:12px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAGESPLAN -->
+    <div class="view" id="v-tagesplan">
+      <h2 class="view-title">Tagesplan</h2>
+      <p class="view-sub">Nur 2-3 Stunden pro Tag — optimiert für maximalen Fortschritt</p>
+      <div class="card mb-20">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3 style="margin:0">Optimaler Tagesablauf</h3>
+          <span class="tag tag-pri" id="totalDayTime" style="font-size:13px"></span>
+        </div>
+        <div class="schedule schedule-edit" id="defaultSchedule"></div>
+      </div>
+    </div>
+
+    <!-- WOCHENPLAN -->
+    <div class="view" id="v-wochenplan">
+      <h2 class="view-title">Wochenplan</h2>
+      <p class="view-sub">Feste Routinen, die sich nicht verhandeln lassen</p>
+      <div class="card mb-20">
+        <h3 class="mb-12">Feste wöchentliche Routinen</h3>
+        <div id="weeklyTaskList" class="task-list"></div>
+        <div class="input-row">
+          <input class="input" id="weeklyInput" placeholder="z.B. Sonntag — Nägel schneiden"/>
+          <button class="btn" id="addWeeklyBtn">Hinzufügen</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="mb-12">Wochenübersicht</h3>
+        <div class="week-grid" id="weekGrid"></div>
+      </div>
+    </div>
+
+    <!-- ZIELE -->
+    <div class="view" id="v-ziele">
+      <h2 class="view-title">Ziele</h2>
+      <p class="view-sub">Langfristige Ziele, die du täglich im Blick behältst</p>
+      <div class="card mb-20">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3 style="margin:0">All-Time Ziele</h3>
+          <button class="btn btn-sm btn-ghost" id="resetGoalsBtn">Alle sichtbar machen</button>
+        </div>
+        <div id="goalsList" class="task-list"></div>
+        <div class="input-row">
+          <input class="input" id="goalInput" placeholder="Neues Ziel"/>
+          <button class="btn" id="addGoalBtn">Hinzufügen</button>
+        </div>
+      </div>
+      <div class="quote">"A goal without a plan is just a wish." <strong>— Antoine de Saint-Exupéry</strong></div>
+      <div class="tip-box">
+        <h4>Wie du Ziele richtig setzt</h4>
+        <ul>
+          <li>Schreib sie konkret und messbar auf (nicht "fitter werden" sondern "10 Klimmzüge schaffen")</li>
+          <li>Setz dir eine Deadline — ohne Deadline ist es nur ein Wunsch</li>
+          <li>Brich große Ziele in wöchentliche Meilensteine runter</li>
+          <li>Lies deine Ziele jeden Morgen und jeden Abend</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- MOODBOARD -->
+    <div class="view" id="v-moodboard">
+      <h2 class="view-title">Moodboard</h2>
+      <p class="view-sub">Dein visuelles Board — zoome rein, verschiebe Karten, bau deine Vision</p>
+      <div class="input-row mb-20">
+        <input class="input" id="moodTitleIn" placeholder="Titel"/>
+        <input class="input" id="moodBodyIn" placeholder="Inhalt"/>
+        <button class="btn" id="addMoodBtn">Karte hinzufügen</button>
+      </div>
+      <div class="moodboard-wrap" id="moodWrap">
+        <div class="moodboard-canvas" id="moodCanvas"></div>
+        <div class="zoom-controls">
+          <button id="zoomOut">−</button>
+          <button id="zoomReset">⟲</button>
+          <button id="zoomIn">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCHLECHTE ANGEWOHNHEITEN -->
+    <div class="view" id="v-angewohnheiten">
+      <h2 class="view-title">Schlechte Angewohnheiten loswerden</h2>
+      <p class="view-sub">Jede Gewohnheit hat einen Trigger. Finde ihn, ersetze ihn, eliminiere ihn.</p>
+      <div class="card-grid c2">
+        <div class="card card-err">
+          <h3>Fingernägel kauen</h3>
+          <p>Identifiziere deinen Trigger: Stress? Langeweile? Ersetze es durch eine Ersatzhandlung — Stressball drücken, Kaugummi kauen. Pflege deine Nägel wöchentlich, damit du sie nicht kaputt machen willst. Bitterer Nagellack als Erinnerung.</p>
+        </div>
+        <div class="card card-err">
+          <h3>Schweiß & Geruch</h3>
+          <p>Ursache meist Ernährung: weniger verarbeitete Lebensmittel, mehr Wasser. Antitranspirant abends auftragen (wirkt über Nacht). Kleidung aus Merino oder Baumwolle statt Polyester. Regelmäßig Achselhaare trimmen. Zinksalbe gegen Bakterien.</p>
+        </div>
+        <div class="card card-err">
+          <h3>Hippeligkeit & Unruhe</h3>
+          <p>Körperliche Auslastung ist der Schlüssel — wer trainiert, ist danach ruhig. Atemübungen: 4 Sek. ein, 7 halten, 8 aus. Koffein nach 12 Uhr streichen. 10 Min. Meditation täglich. Kalte Dusche reguliert das Nervensystem.</p>
+        </div>
+        <div class="card card-err">
+          <h3>Handysucht</h3>
+          <p>Bildschirmzeit-Limit setzen. Handy nie im Schlafzimmer. Social Media nur 2x am Tag, feste Zeiten. Benachrichtigungen aus. Morgens erste Stunde ohne Handy. Greyscale-Modus macht dein Handy langweilig.</p>
+        </div>
+      </div>
+      <div id="customHabits" class="card-grid c2"></div>
+      <div class="input-row mb-20">
+        <input class="input" id="habitNameIn" placeholder="Angewohnheit"/>
+        <input class="input" id="habitDescIn" placeholder="Beschreibung / Plan dagegen"/>
+        <button class="btn" id="addHabitBtn">+</button>
+      </div>
+      <div class="tip-box section-gap-sm">
+        <h4>Das 21/90-Prinzip</h4>
+        <p>21 Tage, um eine Gewohnheit zu bilden. 90 Tage, um sie zum Lifestyle zu machen. Dein Gehirn braucht Wiederholung. Nicht Willenskraft — Systeme. Mach die gute Gewohnheit einfach und die schlechte schwer.</p>
+      </div>
+      <div class="quote">"You don't rise to the level of your goals. You fall to the level of your systems." <strong>— James Clear</strong></div>
+    </div>
+
+    <!-- MINDSET -->
+    <div class="view" id="v-mindset">
+      <h2 class="view-title">Mindset</h2>
+      <p class="view-sub">Dein Kopf entscheidet alles. Kontrolliere deine Gedanken oder sie kontrollieren dich.</p>
+      <div class="card-grid c2">
+        <div class="card card-accent">
+          <h3>Negative Gedanken umlenken</h3>
+          <p>Wenn ein negativer Gedanke kommt: "Ist das ein Fakt oder eine Meinung?" Meistens ist es eine Meinung. Ersetze "Ich kann das nicht" durch "Ich kann das noch nicht." Dein Gehirn glaubt, was du ihm sagst.</p>
+        </div>
+        <div class="card card-accent">
+          <h3>Identität vor Ergebnis</h3>
+          <p>Denk nicht "Ich will fit werden" — denk "Ich bin jemand, der trainiert." Du musst die Person schon sein, die du werden willst. Handle so, wie die beste Version von dir handeln würde.</p>
+        </div>
+        <div class="card card-accent">
+          <h3>Affirmationen & Selbstgespräch</h3>
+          <p>Jeden Morgen 3 Sätze laut sagen: "Ich bin fokussiert. Ich bin diszipliniert. Ich werde jeden Tag besser." Klingt weird, wirkt nachweislich. Dein Unterbewusstsein übernimmt, was du wiederholst.</p>
+        </div>
+        <div class="card card-accent">
+          <h3>Visualisierung</h3>
+          <p>5 Minuten Augen zu: Stell dir vor, wie du in 90 Tagen aussiehst, wie du dich fühlst, wie dein Tag aussieht. Profisportler nutzen das. Arnold hat seine Muskeln visualisiert bevor er trainiert hat. Funktioniert.</p>
+        </div>
+      </div>
+      <div class="tip-box section-gap-sm">
+        <h4>Die 5-Sekunden-Regel</h4>
+        <p>Wenn du etwas tun solltest aber keine Lust hast: Zähl von 5 runter und mach es einfach. 5-4-3-2-1 — Aufstehen. Dein Gehirn hat keine Zeit, Ausreden zu finden. Von Mel Robbins, funktioniert in jeder Situation.</p>
+      </div>
+      <div class="quote">"The mind is everything. What you think, you become." <strong>— Buddha</strong></div>
+    </div>
+
+    <!-- SCHLAF -->
+    <div class="view" id="v-schlaf">
+      <h2 class="view-title">Schlaf optimieren</h2>
+      <p class="view-sub">Schlaf ist das Fundament. Ohne guten Schlaf ist alles andere halb so effektiv.</p>
+      <div class="card-grid c2">
+        <div class="card card-ok">
+          <h3>Was du tun solltest</h3>
+          <p>Jeden Tag gleiche Zeit ins Bett und aufstehen — auch am Wochenende. Raum auf 16-18°C kühlen. Verdunkelungsvorhänge. Magnesium Glycinat 30 Min. vor dem Schlafen. Lavendelöl aufs Kissen. 10 Min. Lesen statt Handy.</p>
+        </div>
+        <div class="card card-err">
+          <h3>Was du vermeiden musst</h3>
+          <p>Koffein nach 14 Uhr (Halbwertszeit 6h). Bildschirme 60 Min. vor dem Schlafen. Schweres Essen nach 20 Uhr. Alkohol (zerstört REM-Schlaf). Intensives Training nach 20 Uhr. Lange Naps nach 15 Uhr.</p>
+        </div>
+      </div>
+      <div class="card section-gap-sm card-accent">
+        <h3 class="mb-12">Optimale Schlafroutine</h3>
+        <div class="schedule">
+          <div class="sched-item"><span class="sched-time">21:00</span><span>Handy weglegen, Blue-Light stoppen</span><span class="sched-dur"></span></div>
+          <div class="sched-item"><span class="sched-time">21:10</span><span>Abend-Skincare, Zähne, Bettfertig</span><span class="sched-dur">10 min</span></div>
+          <div class="sched-item"><span class="sched-time">21:20</span><span>Journaling oder Lesen</span><span class="sched-dur">20 min</span></div>
+          <div class="sched-item"><span class="sched-time">21:40</span><span>Licht aus, Atemübung 4-7-8</span><span class="sched-dur">10 min</span></div>
+          <div class="sched-item"><span class="sched-time">22:00</span><span>Schlafen — Ziel: 7-8h</span><span class="sched-dur"></span></div>
+        </div>
+      </div>
+      <div class="tip-box section-gap-sm">
+        <h4>Huberman Schlaf-Protokoll</h4>
+        <p>Andrew Huberman empfiehlt: Morgens innerhalb von 30 Min. nach dem Aufstehen 10 Min. Sonnenlicht in die Augen (nicht direkt reinschauen). Das setzt deinen zirkadianen Rhythmus und du wirst abends automatisch müde. Kein Koffein in den ersten 90 Min. nach dem Aufstehen.</p>
+      </div>
+      <div class="quote">"Sleep is the greatest legal performance-enhancing drug that most people are neglecting." <strong>— Matthew Walker</strong></div>
+    </div>
+
+    <!-- SPORT -->
+    <div class="view" id="v-sport">
+      <h2 class="view-title">Sport & Training</h2>
+      <p class="view-sub">Dein Körper ist dein Werkzeug. Mach ihn stärker, belastbarer, leistungsfähiger.</p>
+      <div class="card-grid c3">
+        <div class="card"><h3>Kraft</h3><p>3-4x pro Woche. Grundübungen: Kniebeugen, Bankdrücken, Kreuzheben, Klimmzüge. Progressive Overload — jede Woche ein kleines bisschen mehr.</p></div>
+        <div class="card"><h3>Cardio</h3><p>2x pro Woche. Laufen, Radfahren, Schwimmen. Zone 2 Training (reden können während der Belastung) für Ausdauer und Herzgesundheit.</p></div>
+        <div class="card"><h3>Mobility</h3><p>Täglich 10 Min. Stretching oder Yoga. Hüfte, Schultern, Wirbelsäule. Beugt Verletzungen vor und verbessert Haltung.</p></div>
+      </div>
+      <div class="card section-gap-sm">
+        <h3 class="mb-12">Beispiel-Trainingsplan (Push/Pull/Beine)</h3>
+        <div class="card-grid c3">
+          <div class="card card-accent">
+            <h3>Push (Mo/Do)</h3>
+            <p>Bankdrücken 4x8<br>Schulterdrücken 3x10<br>Dips 3x12<br>Seitheben 3x15<br>Trizeps-Pushdown 3x12</p>
+          </div>
+          <div class="card card-accent">
+            <h3>Pull (Di/Fr)</h3>
+            <p>Klimmzüge 4x8<br>Langhantel-Rudern 3x10<br>Face Pulls 3x15<br>Bizeps-Curls 3x12<br>Farmer's Walk 3x30s</p>
+          </div>
+          <div class="card card-accent">
+            <h3>Beine (Mi/Sa)</h3>
+            <p>Kniebeugen 4x8<br>Rumänisches Kreuzheben 3x10<br>Ausfallschritte 3x12<br>Wadenheben 4x15<br>Leiter hoch/runter 5x</p>
+          </div>
+        </div>
+      </div>
+      <div class="card section-gap-sm">
+        <h3 class="mb-12">Funktionelle Alltagsübungen</h3>
+        <div class="card-grid c2">
+          <div class="card card-ok">
+            <h3>Leiter-Training</h3>
+            <p>Leiter rauf und runter klettern trainiert Griffkraft, Core-Stabilität und Koordination. 5 Wiederholungen als Intervall-Training. Treppensprints als Alternative.</p>
+          </div>
+          <div class="card card-ok">
+            <h3>Bodyweight Basics</h3>
+            <p>100 Liegestütze am Tag (verteilt). Plank 3x1 Min. Kniebeugen mit eigenem Gewicht 3x20. Keine Ausreden — geht überall, braucht kein Gym.</p>
+          </div>
+        </div>
+      </div>
+      <div class="quote">"No citizen has a right to be an amateur in the matter of physical training." <strong>— Sokrates</strong></div>
+    </div>
+
+    <!-- ERNÄHRUNG -->
+    <div class="view" id="v-ernaehrung">
+      <h2 class="view-title">Ernährung</h2>
+      <p class="view-sub">Du bist, was du isst. Kein Supplement ersetzt eine gute Grundernährung.</p>
+      <div class="card-grid c2">
+        <div class="card card-ok">
+          <h3>Protein</h3>
+          <p>1.6-2g pro kg Körpergewicht. Quellen: Hähnchen, Eier, Magerquark, Thunfisch, Whey. Verteile auf 4-5 Mahlzeiten. Protein ist der wichtigste Makro für Muskelaufbau und Sättigung.</p>
+        </div>
+        <div class="card card-ok">
+          <h3>Hydration</h3>
+          <p>Minimum 3 Liter Wasser pro Tag. Direkt nach dem Aufstehen 500ml. Vor jeder Mahlzeit ein Glas. Elektrolyte bei Sport. Dein Körper besteht zu 60% aus Wasser — behandle ihn so.</p>
+        </div>
+        <div class="card card-ok">
+          <h3>Mikronährstoffe</h3>
+          <p>Vitamin D3 + K2 (besonders im Winter). Omega-3 (Fisch oder Supplement). Magnesium für Schlaf und Muskeln. Zink für Haut und Immunsystem. Kreatin 5g täglich.</p>
+        </div>
+        <div class="card card-ok">
+          <h3>Meal Prep</h3>
+          <p>Sonntags für die Woche vorkochen. Reis, Hähnchen, Gemüse in Boxen. Spart Zeit, Geld und Ausreden. Wer Essen vorbereitet hat, greift nicht zum Fast Food.</p>
+        </div>
+      </div>
+      <div class="card section-gap-sm card-accent">
+        <h3 class="mb-12">Beispiel-Tagesernährung (ca. 2200-2500 kcal)</h3>
+        <div class="schedule">
+          <div class="sched-item"><span class="sched-time">07:00</span><span>3 Eier, Haferflocken mit Beeren, Wasser</span><span class="sched-dur">~500 kcal</span></div>
+          <div class="sched-item"><span class="sched-time">10:00</span><span>Magerquark mit Nüssen und Honig</span><span class="sched-dur">~300 kcal</span></div>
+          <div class="sched-item"><span class="sched-time">13:00</span><span>Hähnchen, Reis, Brokkoli</span><span class="sched-dur">~600 kcal</span></div>
+          <div class="sched-item"><span class="sched-time">16:00</span><span>Protein-Shake, Banane</span><span class="sched-dur">~300 kcal</span></div>
+          <div class="sched-item"><span class="sched-time">19:00</span><span>Lachs, Süßkartoffel, Salat</span><span class="sched-dur">~600 kcal</span></div>
+        </div>
+      </div>
+      <div class="card section-gap-sm">
+        <h3 class="mb-12">Mein Essensplan</h3>
+        <div id="mealList" class="schedule"></div>
+        <div class="input-row">
+          <input class="input" id="mealTimeIn" placeholder="Uhrzeit z.B. 08:00" style="width:80px;flex:none"/>
+          <input class="input" id="mealFoodIn" placeholder="Mahlzeit"/>
+          <input class="input" id="mealKcalIn" placeholder="kcal" style="width:70px;flex:none"/>
+          <button class="btn" id="addMealBtn">+</button>
+        </div>
+        <div style="margin-top:10px;font-size:13px;color:var(--mute)">Gesamt: <strong id="mealTotal" style="color:#fff">0 kcal</strong></div>
+      </div>
+      <div class="quote">"Let food be thy medicine and medicine be thy food." <strong>— Hippokrates</strong></div>
+    </div>
+
+    <!-- SKINCARE -->
+    <div class="view" id="v-skincare">
+      <h2 class="view-title">Skincare & Pflege</h2>
+      <p class="view-sub">Gute Haut kommt von innen und außen. System statt Zufall.</p>
+      <div class="card-grid c2">
+        <div class="card card-accent">
+          <h3>Morgenroutine</h3>
+          <p>1. Gesicht mit lauwarmem Wasser waschen<br>2. Sanfter Cleanser (CeraVe, Nivea Men)<br>3. Hyaluron-Serum (optional)<br>4. Feuchtigkeitscreme<br>5. Sonnenschutz SPF 30+ (jeden Tag, auch im Winter)</p>
+        </div>
+        <div class="card card-accent">
+          <h3>Abendroutine</h3>
+          <p>1. Gründliche Reinigung (Öl-Cleanser bei Bedarf)<br>2. Reinigungsgel<br>3. Retinol-Serum (2-3x pro Woche, langsam steigern)<br>4. Nachtcreme<br>5. Lippenpflege</p>
+        </div>
+      </div>
+      <div class="card section-gap-sm card-ok">
+        <h3 class="mb-12">Wöchentliche Pflege</h3>
+        <div class="card-grid c3">
+          <div class="card">
+            <h3>Peeling</h3>
+            <p>1-2x pro Woche. Chemisch (AHA/BHA) oder mechanisch. Entfernt tote Haut, verfeinert Poren.</p>
+          </div>
+          <div class="card">
+            <h3>Maske</h3>
+            <p>1x pro Woche. Tonerde-Maske für fettige Haut. Hydrating Mask für trockene. 10-15 Min. einwirken lassen.</p>
+          </div>
+          <div class="card">
+            <h3>Face Massage</h3>
+            <p>Gua Sha oder Jade Roller. 5 Min. nach dem Serum. Fördert Durchblutung, reduziert Schwellungen, definiert Kieferlinie.</p>
+          </div>
+        </div>
+      </div>
+      <div class="tip-box section-gap-sm">
+        <h4>American Psycho Pflege-Routine (ohne den Knacks)</h4>
+        <p>Patrick Bateman hatte eins richtig: akribische Hautpflege. Tiefenreiniger, Peel-Off-Maske, Aftershave-Balsam (kein Alkohol), Feuchtigkeitscreme mit SPF. Der Mann hatte eine 10-Step-Routine. Du brauchst 5 Schritte, aber die machst du jeden Tag. Konsistenz schlägt Komplexität.</p>
+      </div>
+      <div class="card section-gap-sm card-warn">
+        <h3>Zinksalbe — der unterschätzte Gamechanger</h3>
+        <p>Zinksalbe über Nacht auf Unreinheiten. Wirkt antibakteriell, entzündungshemmend, trocknet Pickel aus. Kostet 3 EUR, wirkt besser als teure Spot-Treatments. Dünn auftragen, morgens abwaschen.</p>
+      </div>
+    </div>
+
+    <!-- ROUTINE -->
+    <div class="view" id="v-routine">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div><h2 class="view-title">Tagesroutine</h2>
+        <p class="view-sub">Dein optimierter Tag — 2.5 Stunden Investment, 24 Stunden Wirkung</p></div>
+        <button class="btn btn-sm btn-ghost" id="resetScheduleBtn" style="flex-shrink:0;margin-top:4px">Zeiten zurücksetzen</button>
+      </div>
+      <div class="card mb-20">
+        <h3 class="mb-12">Morgenblock <span class="tag tag-pri" id="morningTotal"></span></h3>
+        <div class="schedule schedule-edit" id="morningSchedule"></div>
+      </div>
+      <div class="card mb-20">
+        <h3 class="mb-12">Abendblock <span class="tag tag-pri" id="eveningTotal"></span></h3>
+        <div class="schedule schedule-edit" id="eveningSchedule"></div>
+      </div>
+      <div class="quote">"We are what we repeatedly do. Excellence, then, is not an act but a habit." <strong>— Aristoteles</strong></div>
+      <div class="tip-box section-gap-sm">
+        <h4>Kein Hamsterrad</h4>
+        <p>Das Geheimnis: Die 2.5 Stunden sind so optimiert, dass sie alles abdecken — Fitness, Pflege, Mindset, Planung. Der Rest deines Tages bleibt frei. Du bist kein Sklave deiner Routine, du bist ihr Architekt. Die Routine dient dir, nicht umgekehrt.</p>
+      </div>
+    </div>
+
+    <!-- GAMECHANGER -->
+    <div class="view" id="v-gamechanger">
+      <h2 class="view-title">Gamechanger</h2>
+      <p class="view-sub">Produkte und Gewohnheiten, die überproportional viel bewirken</p>
+      <div class="card-grid c2">
+        <div class="card card-warn">
+          <h3>Kalte Dusche</h3>
+          <p>30-90 Sekunden am Ende jeder Dusche. Boosted Dopamin um 250%, stärkt Immunsystem, verbessert Durchblutung, baut mentale Härte. Kostet nichts, bringt alles.</p>
+        </div>
+        <div class="card card-warn">
+          <h3>Gua Sha / Face Massage</h3>
+          <p>5 Min. täglich nach dem Serum. Definiert Kieferlinie, reduziert Schwellungen, verbessert Hautbild. Jade Roller oder Gua Sha Stein für 10 EUR.</p>
+        </div>
+        <div class="card card-warn">
+          <h3>Zinksalbe</h3>
+          <p>3 EUR aus der Apotheke. Über Nacht auf Unreinheiten. Antibakteriell, entzündungshemmend. Besser als teure Spot-Treatments. Geheimtipp.</p>
+        </div>
+        <div class="card card-warn">
+          <h3>Kreatin (5g täglich)</h3>
+          <p>Nicht nur für Muskeln — verbessert nachweislich kognitive Leistung. Das am besten erforschte Supplement der Welt. Creatin Monohydrat, kein fancy Zeug nötig.</p>
+        </div>
+        <div class="card card-warn">
+          <h3>Magnesium Glycinat</h3>
+          <p>30 Min. vor dem Schlafen. Verbessert Schlafqualität massiv. Entspannt Muskeln, senkt Cortisol. 80% der Menschen haben einen Mangel.</p>
+        </div>
+        <div class="card card-warn">
+          <h3>Journaling</h3>
+          <p>5 Min. morgens: 3 Dinge, für die du dankbar bist. 3 Ziele für den Tag. Abends: Was lief gut? Was kann besser? Klingt simpel, verändert dein Denken komplett.</p>
+        </div>
+        <div class="card card-warn">
+          <h3>Faszienrolle</h3>
+          <p>5-10 Min. nach dem Training. Löst Verspannungen, beschleunigt Recovery, verbessert Beweglichkeit. Besonders Rücken, Oberschenkel, Waden.</p>
+        </div>
+        <div class="card card-warn">
+          <h3>Blue-Light-Brille</h3>
+          <p>Abends ab 20 Uhr. Blockiert blaues Licht, das Melatonin unterdrückt. Besserer Schlaf, weniger Augenbelastung. Ab 15 EUR.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ZEITMANAGEMENT -->
+    <div class="view" id="v-zeitmanagement">
+      <h2 class="view-title">Zeitmanagement</h2>
+      <p class="view-sub">Du hast genau so viele Stunden wie Elon Musk. Der Unterschied ist, wie du sie nutzt.</p>
+      <div class="card-grid c2">
+        <div class="card card-accent">
+          <h3>Pomodoro-Technik</h3>
+          <p>25 Min. fokussiert arbeiten, 5 Min. Pause. Nach 4 Runden: 15-30 Min. Pause. Dein Gehirn kann maximal 90 Min. am Stück fokussieren. Nutze das.</p>
+        </div>
+        <div class="card card-accent">
+          <h3>Time Blocking</h3>
+          <p>Jeden Abend den nächsten Tag in Blöcke einteilen. Feste Zeiten für feste Aufgaben. Was im Kalender steht, wird gemacht. Was nicht drin steht, fällt aus.</p>
+        </div>
+        <div class="card card-accent">
+          <h3>Eat the Frog</h3>
+          <p>Die schwierigste Aufgabe zuerst. Morgens hast du die meiste Willenskraft. Wenn du den Frosch gefressen hast, ist der Rest einfach.</p>
+        </div>
+        <div class="card card-accent">
+          <h3>2-Minuten-Regel</h3>
+          <p>Wenn etwas weniger als 2 Minuten dauert, mach es sofort. Keine Aufgabe auf die Liste setzen, die du jetzt erledigen könntest. Reduziert Mental Load massiv.</p>
+        </div>
+      </div>
+      <div class="card section-gap-sm card-ok">
+        <h3 class="mb-12">Optimaler Tag mit Uhrzeiten</h3>
+        <div class="schedule">
+          <div class="sched-item"><span class="sched-time">05:30</span><span>Morgenroutine (Skincare, Training, Kalt duschen)</span><span class="sched-dur tag tag-pri">1h 30m</span></div>
+          <div class="sched-item"><span class="sched-time">07:00</span><span>Frühstück + Planung</span><span class="sched-dur">30 min</span></div>
+          <div class="sched-item"><span class="sched-time">07:30</span><span>Deep Work / Arbeit / Schule (Fokusblock 1)</span><span class="sched-dur">2h</span></div>
+          <div class="sched-item"><span class="sched-time">09:30</span><span>Pause, Snack, kurzer Walk</span><span class="sched-dur">15 min</span></div>
+          <div class="sched-item"><span class="sched-time">09:45</span><span>Deep Work / Arbeit (Fokusblock 2)</span><span class="sched-dur">2h</span></div>
+          <div class="sched-item"><span class="sched-time">12:00</span><span>Mittagessen + Pause</span><span class="sched-dur">1h</span></div>
+          <div class="sched-item"><span class="sched-time">13:00</span><span>Leichte Arbeit, Meetings, Admin</span><span class="sched-dur">3h</span></div>
+          <div class="sched-item"><span class="sched-time">16:00</span><span>Feierabend / Freizeit / Socializing</span><span class="sched-dur">4h</span></div>
+          <div class="sched-item"><span class="sched-time">20:00</span><span>Abendroutine (Planung, Skincare, Lesen)</span><span class="sched-dur tag tag-pri">1h 15m</span></div>
+          <div class="sched-item"><span class="sched-time">22:00</span><span>Schlafen</span><span class="sched-dur">7-8h</span></div>
+        </div>
+      </div>
+      <div class="tip-box section-gap-sm">
+        <h4>Nur 2-3 Stunden Self-Development</h4>
+        <p>Der gesamte Improvement-Block beträgt nur ~2h 45min (Morgenroutine + Abendroutine). Der Rest ist normaler Alltag. Kein Hamsterrad — ein System, das in deinen Tag passt und ihn besser macht.</p>
+      </div>
+    </div>
+
+    <!-- FOKUS -->
+    <div class="view" id="v-fokus">
+      <h2 class="view-title">Fokus & Produktivität</h2>
+      <p class="view-sub">Deep Work ist die Superkraft des 21. Jahrhunderts</p>
+      <div class="card-grid c2">
+        <div class="card card-accent">
+          <h3>Ablenkungen eliminieren</h3>
+          <p>Handy in einen anderen Raum. Social Media Apps löschen (du kannst sie über den Browser nutzen). Noise-Cancelling Kopfhörer. Website-Blocker installieren. Deine Umgebung bestimmt dein Verhalten.</p>
+        </div>
+        <div class="card card-accent">
+          <h3>Flow State erreichen</h3>
+          <p>Aufgabe muss schwer genug sein (nicht zu leicht, nicht zu schwer). Klares Ziel haben. Keine Unterbrechungen für 25-90 Min. Musik ohne Text. Der Flow kommt nach 10-15 Min. — halte durch.</p>
+        </div>
+        <div class="card card-accent">
+          <h3>Koffein-Strategie</h3>
+          <p>Erst 90 Min. nach dem Aufstehen (Huberman). Nicht nach 14 Uhr. 1-2 Tassen reichen. Grüner Tee für mildere, längere Wirkung. L-Theanin dazu für Fokus ohne Nervosität.</p>
+        </div>
+        <div class="card card-accent">
+          <h3>Meditation</h3>
+          <p>10 Min. täglich reichen. Sitzen, Augen zu, auf den Atem fokussieren. Gedanke kommt? Zurück zum Atem. Trainiert den Fokus-Muskel. Nach 2 Wochen merkst du den Unterschied.</p>
+        </div>
+      </div>
+      <div class="tip-box section-gap-sm">
+        <h4>Die 90-Minuten-Regel</h4>
+        <p>Dein Gehirn arbeitet in 90-Minuten-Zyklen (Ultradian Rhythms). Nutze das: 90 Min. Deep Work, dann 20 Min. echte Pause (kein Handy). 2-3 dieser Blöcke am Tag und du erreichst mehr als die meisten in einer Woche.</p>
+      </div>
+      <div class="quote">"The ability to perform deep work is becoming increasingly rare at exactly the same time it is becoming increasingly valuable." <strong>— Cal Newport</strong></div>
+    </div>
+
+    <!-- VORBILDER -->
+    <div class="view" id="v-vorbilder">
+      <h2 class="view-title">Vorbilder & Routinen</h2>
+      <p class="view-sub">Studiere die Besten. Kopiere ihre Systeme, nicht ihre Ergebnisse.</p>
+
+      <div class="card mb-20">
+        <div class="person-card">
+          <div class="person-avatar">DG</div>
+          <div class="person-info">
+            <h3>David Goggins</h3>
+            <p>Ex-Navy SEAL, Ultramarathon-Läufer. Von 136kg zum härtesten Mann der Welt.</p>
+          </div>
+        </div>
+        <div class="schedule" style="margin-top:14px">
+          <div class="sched-item"><span class="sched-time">03:00</span><span>Aufstehen, kein Snooze</span><span class="tag tag-pri">Mental</span></div>
+          <div class="sched-item"><span class="sched-time">03:30</span><span>Laufen (10-25 km)</span><span class="tag tag-ok">Cardio</span></div>
+          <div class="sched-item"><span class="sched-time">06:00</span><span>Radfahren oder Schwimmen</span><span class="tag tag-ok">Cardio</span></div>
+          <div class="sched-item"><span class="sched-time">11:00</span><span>Krafttraining</span><span class="tag tag-ok">Kraft</span></div>
+        </div>
+        <div class="tip-box" style="margin-top:12px">
+          <h4>Lektion</h4>
+          <p>"Callusing the mind" — den Geist abhärten. Mach Dinge, die dir unangenehm sind. Die Komfortzone ist der Feind des Wachstums. Du musst nicht um 3 Uhr aufstehen, aber du musst lernen, den inneren Schweinehund zu besiegen.</p>
+        </div>
+      </div>
+
+      <div class="card mb-20">
+        <div class="person-card">
+          <div class="person-avatar">AH</div>
+          <div class="person-info">
+            <h3>Andrew Huberman</h3>
+            <p>Neurowissenschaftler, Stanford Professor. Optimiert den Körper mit Wissenschaft.</p>
+          </div>
+        </div>
+        <div class="schedule" style="margin-top:14px">
+          <div class="sched-item"><span class="sched-time">06:30</span><span>Sonnenlicht in die Augen, kein Koffein</span><span class="tag tag-warn">Protokoll</span></div>
+          <div class="sched-item"><span class="sched-time">08:00</span><span>Koffein + L-Theanin</span><span class="tag tag-warn">Protokoll</span></div>
+          <div class="sched-item"><span class="sched-time">09:00</span><span>Deep Work Block (90 min)</span><span class="tag tag-pri">Fokus</span></div>
+          <div class="sched-item"><span class="sched-time">14:00</span><span>NSDR (Non-Sleep Deep Rest, 20 min)</span><span class="tag tag-warn">Protokoll</span></div>
+          <div class="sched-item"><span class="sched-time">16:00</span><span>Training (Kraft oder Zone 2 Cardio)</span><span class="tag tag-ok">Fitness</span></div>
+        </div>
+        <div class="tip-box" style="margin-top:12px">
+          <h4>Lektion</h4>
+          <p>Alles hat ein Protokoll. Schlaf, Fokus, Training — es gibt für alles wissenschaftlich belegte Optimierungen. Du musst sie nur anwenden. Morgensonne, kalt duschen, Atemübungen — kleine Dinge mit großer Wirkung.</p>
+        </div>
+      </div>
+
+      <div class="card mb-20">
+        <div class="person-card">
+          <div class="person-avatar">AS</div>
+          <div class="person-info">
+            <h3>Arnold Schwarzenegger</h3>
+            <p>7x Mr. Olympia, Gouverneur, Filmstar. Hat alles erreicht, was er sich vorgenommen hat.</p>
+          </div>
+        </div>
+        <div class="schedule" style="margin-top:14px">
+          <div class="sched-item"><span class="sched-time">05:00</span><span>Aufstehen, Radfahren (30 min)</span><span class="tag tag-ok">Cardio</span></div>
+          <div class="sched-item"><span class="sched-time">06:00</span><span>Krafttraining (1-2h, manchmal 2x am Tag)</span><span class="tag tag-ok">Kraft</span></div>
+          <div class="sched-item"><span class="sched-time">08:00</span><span>Frühstück, Arbeit, Visualisierung</span><span class="tag tag-pri">Mental</span></div>
+        </div>
+        <div class="tip-box" style="margin-top:12px">
+          <h4>Lektion</h4>
+          <p>"Sleep faster." Arnold schlief 6h und nutzte den Rest. Sein Geheimnis: absolute Klarheit über seine Ziele. Er hat seine Muskeln visualisiert bevor er trainiert hat. Jede Rep war mental schon erledigt, bevor er die Hantel angefasst hat.</p>
+        </div>
+      </div>
+
+      <div class="card mb-20">
+        <div class="person-card">
+          <div class="person-avatar">PB</div>
+          <div class="person-info">
+            <h3>Patrick Bateman (American Psycho)</h3>
+            <p>Fiktiv, aber die Routine ist real. Akribische Selbstpflege als System.</p>
+          </div>
+        </div>
+        <div class="schedule" style="margin-top:14px">
+          <div class="sched-item"><span class="sched-time">06:00</span><span>1000 Crunches</span><span class="tag tag-ok">Fitness</span></div>
+          <div class="sched-item"><span class="sched-time">06:30</span><span>Tiefenreiniger für Poren</span><span class="tag tag-warn">Skincare</span></div>
+          <div class="sched-item"><span class="sched-time">06:35</span><span>Gel-Cleanser mit Wasser aktivieren</span><span class="tag tag-warn">Skincare</span></div>
+          <div class="sched-item"><span class="sched-time">06:40</span><span>Peel-Off Gesichtsmaske (Kräuter-Minze)</span><span class="tag tag-warn">Skincare</span></div>
+          <div class="sched-item"><span class="sched-time">06:55</span><span>Aftershave Balsam (alkoholfrei), Feuchtigkeitscreme</span><span class="tag tag-warn">Skincare</span></div>
+          <div class="sched-item"><span class="sched-time">07:00</span><span>Anti-Aging Augencreme</span><span class="tag tag-warn">Skincare</span></div>
+        </div>
+        <div class="tip-box" style="margin-top:12px">
+          <h4>Lektion (ohne den Knacks)</h4>
+          <p>Was wir von Bateman lernen: Disziplin in der Pflege zahlt sich aus. Die Routine ist absurd detailliert, aber das Prinzip stimmt — Konsistenz und System schlagen alles. Nimm die Pflege-Obsession, lass den Wahnsinn weg.</p>
+        </div>
+      </div>
+
+      <div class="quote">"Success is not something you pursue — it's something you attract by the person you become." <strong>— Jim Rohn</strong></div>
+    </div>
+
+  </main>
+</div>
+
+<div class="reminder-bar" id="reminderBar">
+  <span>Hast du schon deine Aufgaben für morgen geplant?</span>
+  <button class="btn btn-sm" onclick="navigateTo('tagesplan');document.getElementById('reminderBar').classList.remove('show')">Jetzt planen</button>
+  <button class="btn btn-sm btn-ghost" onclick="document.getElementById('reminderBar').classList.remove('show')">Später</button>
+</div>
+
+<script>
+const STORE_KEY = "levelup90_v2";
+
+const defaultMorningItems = [
+  {task:"Aufstehen, Wasser, Sonnenlicht",dur:5},
+  {task:"Skincare Morgenroutine",dur:10},
+  {task:"Workout (Kraft oder Cardio)",dur:40},
+  {task:"Kalt duschen, Pflege",dur:15},
+  {task:"Frühstück + Journaling",dur:20},
+  {task:"Tag beginnt",dur:0}
+];
+const defaultEveningItems = [
+  {task:"Skincare Abend + Zähne",dur:10},
+  {task:"Morgen planen, Ziele lesen",dur:15},
+  {task:"Lesen / Lernen",dur:30},
+  {task:"Stretching / Mobility",dur:10},
+  {task:"Handy weg, Entspannung",dur:10},
+  {task:"Schlafen",dur:0}
+];
+
+function minsToTime(m){
+  const h=Math.floor(m/60)%24,min=m%60;
+  return String(h).padStart(2,"0")+":"+String(min).padStart(2,"0");
+}
+
+function formatDur(total){
+  if(total<=0)return"";
+  const h=Math.floor(total/60),m=total%60;
+  if(h&&m)return h+"h "+m+"min";
+  if(h)return h+"h";
+  return m+" min";
+}
+
+function getBlockWithTimes(start,items){
+  const result=[];
+  let t=start;
+  for(const it of items){
+    result.push({task:it.task,dur:it.dur,mins:t});
+    t+=it.dur;
+  }
+  return result;
+}
+
+const weekDays = ["Mo","Di","Mi","Do","Fr","Sa","So"];
+const defaultWeekly = [
+  {text:"Mo — Push-Training",done:false},
+  {text:"Di — Pull-Training",done:false},
+  {text:"Mi — Beine + Meal Prep",done:false},
+  {text:"Do — Push-Training",done:false},
+  {text:"Fr — Pull-Training + Wohnung aufräumen",done:false},
+  {text:"Sa — Beine + Cardio",done:false},
+  {text:"So — Rasieren, Nägel, Hautpflege-Reset, Wochenreview",done:false}
+];
+
+const defaultState = {
+  morningStart:330,
+  morningItems:structuredClone(defaultMorningItems),
+  eveningStart:1200,
+  eveningItems:structuredClone(defaultEveningItems),
+  todayTasks:[
+    {text:"05:30 Aufstehen, Wasser trinken",done:false},
+    {text:"05:45 Workout 40 Min.",done:false},
+    {text:"06:25 Kalt duschen",done:false},
+    {text:"20:10 Morgen planen",done:false},
+    {text:"20:25 30 Min. Lesen",done:false}
+  ],
+  tomorrowTasks:[
+    {text:"Kernaufgaben für morgen festlegen",done:false}
+  ],
+  weeklyRoutines: structuredClone(defaultWeekly),
+  goals:[
+    {text:"90 Tage Streak ohne Ausnahme",done:false},
+    {text:"10 Klimmzüge am Stück",done:false},
+    {text:"Schlafqualität auf 8h optimieren",done:false},
+    {text:"Hautbild sichtbar verbessern",done:false}
+  ],
+  moodCards:[
+    {title:"Identität",body:"Ich handle wie die Person, die ich werden will.",x:40,y:40},
+    {title:"Körper",body:"Stärker, belastbarer, besseres Auftreten.",x:290,y:40},
+    {title:"Fokus",body:"Jeden Tag Deep Work ohne Ablenkung.",x:540,y:40},
+    {title:"Disziplin",body:"Ich mache es, auch wenn ich keine Lust habe.",x:40,y:220},
+    {title:"Ernährung",body:"Mein Körper bekommt, was er braucht.",x:290,y:220},
+    {title:"Schlaf",body:"7-8h, keine Kompromisse.",x:540,y:220}
+  ],
+  customHabits:[],
+  meals:[],
+  notes:[],
+  savedPresets:[],
+  streak:0,
+  lastActiveDate:null,
+  lastWeekReset:null,
+  savedAt:null
+};
+
+function load(){
+  try{
+    const raw=localStorage.getItem(STORE_KEY);
+    if(!raw)return structuredClone(defaultState);
+    const parsed=JSON.parse(raw);
+    if(parsed.schedule)delete parsed.schedule;
+    if(parsed.morningItems){
+      const broken=!Array.isArray(parsed.morningItems)||parsed.morningItems.length===0||parsed.morningItems.some(it=>typeof it.dur!=="number");
+      if(broken){delete parsed.morningItems;delete parsed.eveningItems;delete parsed.morningStart;delete parsed.eveningStart;}
+    }
+    if(parsed.eveningItems){
+      const broken=!Array.isArray(parsed.eveningItems)||parsed.eveningItems.length===0||parsed.eveningItems.some(it=>typeof it.dur!=="number");
+      if(broken){delete parsed.eveningItems;delete parsed.eveningStart;}
+    }
+    return {...structuredClone(defaultState),...parsed};
+  }catch(e){return structuredClone(defaultState)}
+}
+
+function forceScheduleReset(){
+  state.morningStart=330;
+  state.morningItems=structuredClone(defaultMorningItems);
+  state.eveningStart=1200;
+  state.eveningItems=structuredClone(defaultEveningItems);
+  save();
+}
+
+const state=load();
+
+function save(){
+  state.savedAt=new Date().toLocaleString("de-DE");
+  localStorage.setItem(STORE_KEY,JSON.stringify(state));
+  document.getElementById("saveIndicator").textContent="Gespeichert: "+state.savedAt;
+}
+
+function getMonday(d){
+  const dt=new Date(d);
+  const day=dt.getDay();
+  const diff=dt.getDate()-day+(day===0?-6:1);
+  return new Date(dt.setDate(diff)).toDateString();
+}
+
+function checkWeeklyReset(){
+  const thisMonday=getMonday(new Date());
+  if(state.lastWeekReset!==thisMonday){
+    state.weeklyRoutines.forEach(r=>r.done=false);
+    state.lastWeekReset=thisMonday;
+    save();
+  }
+}
+
+function updateStreak(){
+  const today=new Date().toDateString();
+  if(state.lastActiveDate!==today){
+    const yesterday=new Date(Date.now()-86400000).toDateString();
+    if(state.lastActiveDate===yesterday){
+      state.streak++;
+    }else if(state.lastActiveDate!==today){
+      state.streak= state.lastActiveDate ? 1 : 0;
+    }
+    state.lastActiveDate=today;
+    save();
+  }
+}
+
+/* NAVIGATION */
+function navigateTo(view){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
+  const el=document.getElementById("v-"+view);
+  if(el)el.classList.add("active");
+  const nav=document.querySelector(`.nav-item[data-view="${view}"]`);
+  if(nav)nav.classList.add("active");
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("overlay").classList.remove("show");
+  document.querySelector(".main").scrollTop=0;
+}
+
+document.querySelectorAll(".nav-item").forEach(item=>{
+  item.addEventListener("click",()=>navigateTo(item.dataset.view));
+});
+
+document.getElementById("mobileToggle").addEventListener("click",()=>{
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("overlay").classList.toggle("show");
+});
+document.getElementById("overlay").addEventListener("click",()=>{
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("overlay").classList.remove("show");
+});
+
+/* TASK LIST RENDERING */
+function renderTaskList(items,containerId,stateKey){
+  const el=document.getElementById(containerId);
+  el.innerHTML="";
+  items.forEach((item,i)=>{
+    const div=document.createElement("div");
+    div.className="task-item"+(item.done?" done":"");
+    const cb=document.createElement("input");
+    cb.type="checkbox";cb.checked=item.done;
+    cb.addEventListener("change",()=>{item.done=cb.checked;renderAll();save()});
+    const sp=document.createElement("span");
+    sp.textContent=item.text;sp.contentEditable="true";
+    sp.addEventListener("input",()=>{item.text=sp.textContent.trim();save();renderWeekGrid()});
+    const del=document.createElement("button");
+    del.className="del-btn";del.textContent="✕";
+    del.addEventListener("click",()=>{state[stateKey].splice(i,1);renderAll();save()});
+    div.append(cb,sp,del);
+    el.appendChild(div);
+  });
+}
+
+function addTask(inputId,stateKey){
+  const inp=document.getElementById(inputId);
+  const v=inp.value.trim();
+  if(!v)return;
+  state[stateKey].push({text:v,done:false});
+  inp.value="";
+  renderAll();save();
+}
+
+/* HOLD-TO-REPEAT */
+let holdTimer=null,holdActive=false,holdFn=null;
+function startHold(fn){
+  stopHold();
+  holdFn=fn;holdActive=true;
+  fn();
+  let count=0;
+  function repeat(){
+    if(!holdActive)return;
+    holdFn();count++;
+    const delay=Math.max(50,200-count*12);
+    holdTimer=setTimeout(repeat,delay);
+  }
+  holdTimer=setTimeout(repeat,400);
+}
+function stopHold(){
+  holdActive=false;holdFn=null;clearTimeout(holdTimer);holdTimer=null;
+}
+document.addEventListener("mouseup",stopHold);
+document.addEventListener("touchend",stopHold);
+document.addEventListener("touchcancel",stopHold);
+
+/* SCHEDULE RENDERING */
+function adjustBlock(block,delta){
+  if(block==="morning"){
+    const n=state.morningStart+delta;
+    if(n<0)return;
+    state.morningStart=n;
+  }else{
+    const n=state.eveningStart+delta;
+    if(n>=1440)return;
+    state.eveningStart=n;
+  }
+  save();renderSchedules();
+}
+
+/* DRAG AND DROP */
+let dragSrc=null;
+
+function doDrop(targetBlock,targetIdx){
+  if(!dragSrc)return;
+  const srcItems=dragSrc.block==="morning"?state.morningItems:state.eveningItems;
+  const tgtItems=targetBlock==="morning"?state.morningItems:state.eveningItems;
+  const [item]=srcItems.splice(dragSrc.idx,1);
+  let adj=targetIdx;
+  if(dragSrc.block===targetBlock&&dragSrc.idx<targetIdx)adj--;
+  tgtItems.splice(adj,0,item);
+  dragSrc=null;
+  save();renderSchedules();
+}
+
+function clearDragStyles(){
+  document.querySelectorAll(".dragging,.drag-over-above,.drag-over-below,.drag-over-zone").forEach(el=>{
+    el.classList.remove("dragging","drag-over-above","drag-over-below","drag-over-zone");
+  });
+}
+
+function renderEditableBlock(block,containerId,append){
+  const el=document.getElementById(containerId);
+  if(!el)return;
+  if(!append)el.innerHTML="";
+  const items=block==="morning"?state.morningItems:state.eveningItems;
+  const start=block==="morning"?state.morningStart:state.eveningStart;
+  const withTimes=getBlockWithTimes(start,items);
+
+  withTimes.forEach((item,i)=>{
+    const div=document.createElement("div");
+    div.className="sched-item";
+    div.draggable=true;
+
+    div.addEventListener("dragstart",e=>{
+      dragSrc={block,idx:i};
+      e.dataTransfer.effectAllowed="move";
+      requestAnimationFrame(()=>div.classList.add("dragging"));
+    });
+    div.addEventListener("dragend",()=>clearDragStyles());
+    div.addEventListener("dragover",e=>{
+      e.preventDefault();e.dataTransfer.dropEffect="move";
+      clearDragStyles();
+      const rect=div.getBoundingClientRect();
+      const mid=rect.top+rect.height/2;
+      if(e.clientY<mid)div.classList.add("drag-over-above");
+      else div.classList.add("drag-over-below");
+    });
+    div.addEventListener("dragleave",()=>{
+      div.classList.remove("drag-over-above","drag-over-below");
+    });
+    div.addEventListener("drop",e=>{
+      e.preventDefault();
+      const rect=div.getBoundingClientRect();
+      const mid=rect.top+rect.height/2;
+      const insertIdx=e.clientY<mid?i:i+1;
+      doDrop(block,insertIdx);
+    });
+
+    const grip=document.createElement("div");
+    grip.className="drag-handle";
+    grip.textContent="⣿";
+    div.appendChild(grip);
+
+    const timeCell=document.createElement("div");
+    timeCell.className="sched-time-cell";
+    const arrows=document.createElement("div");
+    arrows.className="sched-arrows";
+    const up=document.createElement("button");
+    up.className="sched-arrow";up.textContent="▲";
+    const upFn=()=>{
+      if(i===0){
+        if(block==="morning")state.morningStart+=5;else state.eveningStart+=5;
+      }else{items[i-1].dur+=5}
+      save();renderSchedules();
+    };
+    up.addEventListener("mousedown",e=>{e.stopPropagation();e.preventDefault();startHold(upFn)});
+    up.addEventListener("touchstart",e=>{e.stopPropagation();e.preventDefault();startHold(upFn)},{passive:false});
+    const down=document.createElement("button");
+    down.className="sched-arrow";down.textContent="▼";
+    const downFn=()=>{
+      if(i===0){
+        const st=block==="morning"?state.morningStart:state.eveningStart;
+        if(st-5<0)return;
+        if(block==="morning")state.morningStart-=5;else state.eveningStart-=5;
+      }else{
+        if(items[i-1].dur<5)return;
+        items[i-1].dur-=5;
+      }
+      save();renderSchedules();
+    };
+    down.addEventListener("mousedown",e=>{e.stopPropagation();e.preventDefault();startHold(downFn)});
+    down.addEventListener("touchstart",e=>{e.stopPropagation();e.preventDefault();startHold(downFn)},{passive:false});
+    arrows.append(up,down);
+    const tt=document.createElement("span");
+    tt.className="sched-time";tt.textContent=minsToTime(item.mins);
+    timeCell.append(arrows,tt);
+    div.appendChild(timeCell);
+
+    const taskSpan=document.createElement("span");
+    taskSpan.textContent=item.task;
+    taskSpan.contentEditable="true";
+    taskSpan.style.cssText="cursor:text;outline:none;border-radius:4px;padding:1px 4px";
+    taskSpan.addEventListener("focus",()=>taskSpan.style.background="rgba(255,255,255,.08)");
+    taskSpan.addEventListener("blur",()=>{taskSpan.style.background="";items[i].task=taskSpan.textContent.trim();save();renderDashboard()});
+    taskSpan.addEventListener("mousedown",e=>e.stopPropagation());
+    div.appendChild(taskSpan);
+
+    const durSpan=document.createElement("span");
+    durSpan.className="sched-dur";
+    durSpan.textContent=item.dur>0?formatDur(item.dur):"";
+    div.appendChild(durSpan);
+
+    const delBtn=document.createElement("button");
+    delBtn.className="sched-del";delBtn.textContent="−";
+    delBtn.addEventListener("click",e=>{
+      e.stopPropagation();
+      const arr=block==="morning"?state.morningItems:state.eveningItems;
+      arr.splice(i,1);
+      save();renderSchedules();
+    });
+    div.appendChild(delBtn);
+
+    el.appendChild(div);
+  });
+
+  if(!append){
+    const dropZone=document.createElement("div");
+    dropZone.className="drop-zone";
+    dropZone.textContent=block==="morning"?"Hierher ziehen (Morgen)":"Hierher ziehen (Abend)";
+    dropZone.addEventListener("dragover",e=>{
+      e.preventDefault();e.dataTransfer.dropEffect="move";
+      dropZone.classList.add("drag-over-zone");
+    });
+    dropZone.addEventListener("dragleave",()=>dropZone.classList.remove("drag-over-zone"));
+    dropZone.addEventListener("drop",e=>{
+      e.preventDefault();
+      doDrop(block,items.length);
+      clearDragStyles();
+    });
+    el.appendChild(dropZone);
+
+    const addRow=document.createElement("div");
+    addRow.className="add-sched-row";
+    const nameIn=document.createElement("input");
+    nameIn.className="input";nameIn.placeholder="Neue Aufgabe";
+    const durIn=document.createElement("input");
+    durIn.className="input input-dur";durIn.placeholder="Min.";durIn.type="number";durIn.min="0";
+    const addBtn=document.createElement("button");
+    addBtn.className="add-sched-btn";addBtn.textContent="+";
+    function doAdd(){
+      const t=nameIn.value.trim();
+      const d=parseInt(durIn.value)||0;
+      if(!t)return;
+      const arr=block==="morning"?state.morningItems:state.eveningItems;
+      const insertAt=Math.max(0,arr.length-1);
+      arr.splice(insertAt,0,{task:t,dur:d});
+      nameIn.value="";durIn.value="";
+      save();renderSchedules();
+    }
+    addBtn.addEventListener("click",doAdd);
+    nameIn.addEventListener("keydown",e=>{if(e.key==="Enter")doAdd()});
+    durIn.addEventListener("keydown",e=>{if(e.key==="Enter")doAdd()});
+    addRow.append(nameIn,durIn,addBtn);
+    el.appendChild(addRow);
+  }
+}
+
+function renderSchedules(){
+  renderEditableBlock("morning","morningSchedule");
+  renderEditableBlock("evening","eveningSchedule");
+  const tpEl=document.getElementById("defaultSchedule");
+  if(tpEl){tpEl.innerHTML="";}
+  renderEditableBlock("morning","defaultSchedule");
+  renderEditableBlock("evening","defaultSchedule");
+  const mTotal=state.morningItems.reduce((s,it)=>s+it.dur,0);
+  const eTotal=state.eveningItems.reduce((s,it)=>s+it.dur,0);
+  const mt=document.getElementById("morningTotal");
+  const et=document.getElementById("eveningTotal");
+  if(mt)mt.textContent=formatDur(mTotal);
+  if(et)et.textContent=formatDur(eTotal);
+  const tdEl=document.getElementById("totalDayTime");
+  if(tdEl)tdEl.textContent="Gesamt: "+formatDur(mTotal+eTotal);
+  renderDashboard();
+}
+
+/* DASHBOARD */
+function renderDashboard(){
+  document.getElementById("streakNum").textContent=state.streak;
+  const todayTotal=state.todayTasks.length;
+  const todayChecked=state.todayTasks.filter(t=>t.done).length;
+  document.getElementById("todayDone").textContent=todayTotal?Math.round(todayChecked/todayTotal*100)+"%":"0%";
+  document.getElementById("goalsCount").textContent=state.goals.filter(g=>!g.done).length;
+  const weekTotal=state.weeklyRoutines.length;
+  const weekChecked=state.weeklyRoutines.filter(t=>t.done).length;
+  document.getElementById("weeklyDone").textContent=weekTotal?Math.round(weekChecked/weekTotal*100)+"%":"0%";
+
+  const dashEl=document.getElementById("dashSchedulePreview");
+  if(dashEl){
+    dashEl.innerHTML="";
+    const allBlocks=[
+      ...getBlockWithTimes(state.morningStart,state.morningItems),
+      ...getBlockWithTimes(state.eveningStart,state.eveningItems)
+    ];
+    allBlocks.forEach(s=>{
+      const d=document.createElement("div");d.className="sched-item";
+      d.innerHTML=`<span class="sched-time">${minsToTime(s.mins)}</span><span>${s.task}</span><span class="sched-dur">${s.dur>0?formatDur(s.dur):""}</span>`;
+      dashEl.appendChild(d);
+    });
+  }
+
+}
+
+/* WEEK GRID */
+function buildWeekGrid(targetEl){
+  targetEl.innerHTML="";
+  const jsDay=new Date().getDay();
+  const todayIdx=jsDay===0?6:jsDay-1;
+  const ordered=[];
+  for(let i=0;i<7;i++)ordered.push((todayIdx+i)%7);
+  ordered.forEach((di,oi)=>{
+    const day=weekDays[di];
+    const col=document.createElement("div");
+    col.className="week-day";
+    if(oi===0)col.style.borderColor="#fff";
+    col.innerHTML=`<h4>${day}${oi===0?" (Heute)":""}</h4>`;
+    const routines=state.weeklyRoutines.filter(r=>r.text.toLowerCase().startsWith(day.toLowerCase()));
+    if(routines.length===0){
+      const empty=document.createElement("div");
+      empty.className="task-mini";
+      empty.textContent="—";
+      col.appendChild(empty);
+    }else{
+      routines.forEach(r=>{
+        const mini=document.createElement("div");
+        mini.className="task-mini";
+        mini.textContent=r.text.replace(new RegExp("^"+day+"\\s*[—\\-:]?\\s*","i"),"");
+        col.appendChild(mini);
+      });
+    }
+    targetEl.appendChild(col);
+  });
+}
+function renderWeekGrid(){
+  const g1=document.getElementById("weekGrid");
+  const g2=document.getElementById("dashWeekGrid");
+  if(g1)buildWeekGrid(g1);
+  if(g2)buildWeekGrid(g2);
+}
+
+/* MOODBOARD */
+let moodZoom=1,moodPanX=0,moodPanY=0;
+let isPanning=false,panStartX=0,panStartY=0;
+let dragCard=null,dragOffX=0,dragOffY=0;
+
+function renderMoodboard(){
+  const canvas=document.getElementById("moodCanvas");
+  canvas.innerHTML="";
+  state.moodCards.forEach((card,i)=>{
+    const node=document.createElement("div");
+    node.className="mood-card";
+    node.style.left=card.x+"px";
+    node.style.top=card.y+"px";
+
+    const grip=document.createElement("div");
+    grip.className="mood-grip";
+    const gripIcon=document.createElement("span");
+    gripIcon.textContent="⣿⣿";
+    const del=document.createElement("button");
+    del.className="mood-del";del.textContent="✕";
+    del.addEventListener("click",e=>{e.stopPropagation();state.moodCards.splice(i,1);renderMoodboard();save()});
+    grip.append(gripIcon,del);
+
+    grip.addEventListener("mousedown",e=>{
+      if(e.target.tagName==="BUTTON")return;
+      e.stopPropagation();
+      dragCard={idx:i,el:node};
+      const rect=node.getBoundingClientRect();
+      dragOffX=(e.clientX-rect.left)/moodZoom;
+      dragOffY=(e.clientY-rect.top)/moodZoom;
+      node.classList.add("mc-dragging");
+    });
+
+    grip.addEventListener("touchstart",e=>{
+      if(e.target.tagName==="BUTTON")return;
+      e.stopPropagation();
+      const touch=e.touches[0];
+      dragCard={idx:i,el:node};
+      const rect=node.getBoundingClientRect();
+      dragOffX=(touch.clientX-rect.left)/moodZoom;
+      dragOffY=(touch.clientY-rect.top)/moodZoom;
+      node.classList.add("mc-dragging");
+    },{passive:true});
+
+    const bodyDiv=document.createElement("div");
+    bodyDiv.className="mood-body";
+    const title=document.createElement("h4");
+    title.textContent=card.title;title.contentEditable="true";
+    title.addEventListener("input",()=>{card.title=title.textContent.trim();save()});
+    const bodyP=document.createElement("p");
+    bodyP.textContent=card.body;bodyP.contentEditable="true";
+    bodyP.addEventListener("input",()=>{card.body=bodyP.textContent.trim();save()});
+    bodyDiv.append(title,bodyP);
+
+    node.append(grip,bodyDiv);
+    canvas.appendChild(node);
+  });
+  applyMoodTransform();
+}
+
+function applyMoodTransform(){
+  const canvas=document.getElementById("moodCanvas");
+  canvas.style.transform=`translate(${moodPanX}px,${moodPanY}px) scale(${moodZoom})`;
+}
+
+const moodWrap=document.getElementById("moodWrap");
+
+moodWrap.addEventListener("mousedown",e=>{
+  if(dragCard)return;
+  isPanning=true;
+  panStartX=e.clientX-moodPanX;
+  panStartY=e.clientY-moodPanY;
+  moodWrap.style.cursor="grabbing";
+});
+
+function moveMoodCard(clientX,clientY){
+  if(!dragCard)return;
+  const wrapRect=moodWrap.getBoundingClientRect();
+  const card=state.moodCards[dragCard.idx];
+  card.x=Math.max(0,Math.round((clientX-wrapRect.left)/moodZoom-moodPanX/moodZoom-dragOffX));
+  card.y=Math.max(0,Math.round((clientY-wrapRect.top)/moodZoom-moodPanY/moodZoom-dragOffY));
+  dragCard.el.style.left=card.x+"px";
+  dragCard.el.style.top=card.y+"px";
+}
+
+document.addEventListener("mousemove",e=>{
+  if(dragCard){moveMoodCard(e.clientX,e.clientY);return}
+  if(!isPanning)return;
+  moodPanX=e.clientX-panStartX;
+  moodPanY=e.clientY-panStartY;
+  applyMoodTransform();
+});
+
+document.addEventListener("touchmove",e=>{
+  if(dragCard){e.preventDefault();moveMoodCard(e.touches[0].clientX,e.touches[0].clientY)}
+},{passive:false});
+
+function endMoodDrag(){
+  if(dragCard){dragCard.el.classList.remove("mc-dragging");dragCard=null;save()}
+  isPanning=false;
+  moodWrap.style.cursor="grab";
+}
+
+document.addEventListener("mouseup",endMoodDrag);
+document.addEventListener("touchend",endMoodDrag);
+
+moodWrap.addEventListener("wheel",e=>{
+  e.preventDefault();
+  const delta=e.deltaY>0?-0.1:0.1;
+  moodZoom=Math.min(3,Math.max(0.3,moodZoom+delta));
+  applyMoodTransform();
+},{passive:false});
+
+document.getElementById("zoomIn").addEventListener("click",()=>{moodZoom=Math.min(3,moodZoom+0.2);applyMoodTransform()});
+document.getElementById("zoomOut").addEventListener("click",()=>{moodZoom=Math.max(0.3,moodZoom-0.2);applyMoodTransform()});
+document.getElementById("zoomReset").addEventListener("click",()=>{moodZoom=1;moodPanX=0;moodPanY=0;applyMoodTransform()});
+
+/* ADD MOOD CARD */
+document.getElementById("addMoodBtn").addEventListener("click",()=>{
+  const t=document.getElementById("moodTitleIn").value.trim();
+  const b=document.getElementById("moodBodyIn").value.trim();
+  if(!t||!b)return;
+  const maxX=Math.max(0,...state.moodCards.map(c=>c.x));
+  state.moodCards.push({title:t,body:b,x:maxX+250,y:40});
+  document.getElementById("moodTitleIn").value="";
+  document.getElementById("moodBodyIn").value="";
+  renderMoodboard();save();
+});
+
+/* BUTTON BINDINGS */
+document.getElementById("addWeeklyBtn").addEventListener("click",()=>addTask("weeklyInput","weeklyRoutines"));
+document.getElementById("addGoalBtn").addEventListener("click",()=>addTask("goalInput","goals"));
+
+["weeklyInput","goalInput"].forEach(id=>{
+  document.getElementById(id).addEventListener("keydown",e=>{
+    if(e.key==="Enter"){
+      const map={weeklyInput:"weeklyRoutines",goalInput:"goals"};
+      addTask(id,map[id]);
+    }
+  });
+});
+
+document.getElementById("resetBtn").addEventListener("click",()=>{
+  if(!confirm("Wirklich alles zurücksetzen?"))return;
+  localStorage.removeItem(STORE_KEY);
+  location.reload();
+});
+
+document.getElementById("resetGoalsBtn").addEventListener("click",()=>{
+  state.goals.forEach(g=>g.done=false);
+  save();renderAll();
+});
+
+document.getElementById("resetScheduleBtn").addEventListener("click",()=>{
+  state.morningStart=330;
+  state.morningItems=structuredClone(defaultMorningItems);
+  state.eveningStart=1200;
+  state.eveningItems=structuredClone(defaultEveningItems);
+  save();renderSchedules();
+});
+
+/* MEALS */
+function renderMeals(){
+  const el=document.getElementById("mealList");
+  if(!el)return;
+  el.innerHTML="";
+  state.meals.sort((a,b)=>a.time.localeCompare(b.time));
+  state.meals.forEach((m,i)=>{
+    const row=document.createElement("div");
+    row.className="sched-item";
+    row.innerHTML=`<span class="sched-time">${m.time}</span><span>${m.food}</span><span class="sched-dur">${m.kcal?'~'+m.kcal+' kcal':''}</span>`;
+    const del=document.createElement("button");
+    del.className="sched-del";del.textContent="−";
+    del.addEventListener("click",()=>{state.meals.splice(i,1);save();renderMeals()});
+    row.appendChild(del);
+    el.appendChild(row);
+  });
+  const total=state.meals.reduce((s,m)=>s+(parseInt(m.kcal)||0),0);
+  const totalEl=document.getElementById("mealTotal");
+  if(totalEl)totalEl.textContent=total+" kcal";
+}
+
+document.getElementById("addMealBtn").addEventListener("click",addMeal);
+document.getElementById("mealTimeIn").addEventListener("keydown",e=>{if(e.key==="Enter")addMeal()});
+document.getElementById("mealFoodIn").addEventListener("keydown",e=>{if(e.key==="Enter")addMeal()});
+document.getElementById("mealKcalIn").addEventListener("keydown",e=>{if(e.key==="Enter")addMeal()});
+
+const kcalDB={
+  "ei":80,"eier":80,"spiegelei":110,"rührei":150,
+  "haferflocken":350,"oatmeal":350,"porridge":350,
+  "reis":130,"nudeln":160,"pasta":160,"spaghetti":160,"kartoffel":80,"süßkartoffel":90,
+  "brot":250,"brötchen":140,"toast":260,"vollkornbrot":220,
+  "hähnchen":165,"hühnchen":165,"chicken":165,"hähnchenbrust":120,"putenbrust":110,
+  "rindfleisch":250,"steak":270,"hackfleisch":220,"rinderhack":220,
+  "lachs":200,"thunfisch":130,"fisch":120,"garnelen":100,
+  "magerquark":65,"quark":100,"joghurt":60,"skyr":60,"milch":50,
+  "käse":350,"mozzarella":280,"parmesan":400,
+  "butter":740,"öl":880,"olivenöl":880,
+  "banane":90,"apfel":55,"beeren":40,"orange":45,"avocado":160,
+  "brokkoli":35,"spinat":25,"salat":15,"tomate":20,"gurke":15,"paprika":30,"karotte":40,
+  "nüsse":600,"mandeln":580,"walnüsse":650,"erdnüsse":570,"erdnussbutter":590,
+  "honig":300,"zucker":400,"marmelade":250,
+  "protein-shake":120,"whey":120,"proteinshake":120,"shake":120,
+  "müsli":370,"cornflakes":380,"granola":450,
+  "pizza":250,"burger":300,"pommes":310,"döner":250,"kebab":250,
+  "schokolade":550,"eis":200,"kuchen":350,"kekse":480,
+  "kaffee":2,"tee":1,"saft":45,"cola":42,"wasser":0,
+  "hummus":170,"falafel":330,"wrap":200,"sandwich":250
+};
+
+function estimateKcal(food){
+  const lower=food.toLowerCase();
+  let bestMatch="",bestScore=0;
+  for(const key in kcalDB){
+    if(lower.includes(key)&&key.length>bestScore){
+      bestMatch=key;bestScore=key.length;
+    }
+  }
+  if(!bestMatch)return"";
+  const base=kcalDB[bestMatch];
+  const numMatch=lower.match(/(\d+)\s*(g|gramm)/);
+  if(numMatch)return Math.round(base*parseInt(numMatch[1])/100);
+  const portionWords=["portion","teller","schüssel","bowl"];
+  if(portionWords.some(w=>lower.includes(w)))return Math.round(base*2.5);
+  const countMatch=lower.match(/^(\d+)\s/);
+  if(countMatch&&["ei","eier","banane","apfel","orange","brötchen","toast"].some(w=>bestMatch.includes(w)||w.includes(bestMatch))){
+    return base*parseInt(countMatch[1]);
+  }
+  return Math.round(base*1.5);
+}
+
+document.getElementById("mealFoodIn").addEventListener("input",()=>{
+  const f=document.getElementById("mealFoodIn").value.trim();
+  const kField=document.getElementById("mealKcalIn");
+  if(f&&!kField.value){
+    const est=estimateKcal(f);
+    if(est)kField.placeholder="~"+est+" kcal";
+    else kField.placeholder="kcal";
+  }else if(!f){kField.placeholder="kcal"}
+});
+
+function addMeal(){
+  const t=document.getElementById("mealTimeIn").value.trim();
+  const f=document.getElementById("mealFoodIn").value.trim();
+  let k=document.getElementById("mealKcalIn").value.trim();
+  if(!f)return;
+  if(!k){const est=estimateKcal(f);if(est)k=String(est)}
+  state.meals.push({time:t||"--:--",food:f,kcal:k});
+  document.getElementById("mealTimeIn").value="";
+  document.getElementById("mealFoodIn").value="";
+  document.getElementById("mealKcalIn").value="";
+  document.getElementById("mealKcalIn").placeholder="kcal";
+  save();renderMeals();
+}
+
+/* NOTES */
+function renderNotes(){
+  const el=document.getElementById("notesList");
+  if(!el)return;
+  el.innerHTML="";
+  state.notes.forEach((n,i)=>{
+    const div=document.createElement("div");
+    div.className="task-item"+(n.done?" done":"");
+    const cb=document.createElement("input");
+    cb.type="checkbox";cb.checked=n.done;
+    cb.addEventListener("change",()=>{n.done=cb.checked;save();renderNotes()});
+    const sp=document.createElement("span");
+    sp.textContent=n.text;sp.contentEditable="true";
+    sp.addEventListener("input",()=>{n.text=sp.textContent.trim();save()});
+    const del=document.createElement("button");
+    del.className="del-btn";del.textContent="✕";
+    del.addEventListener("click",()=>{state.notes.splice(i,1);save();renderNotes()});
+    div.append(cb,sp,del);
+    el.appendChild(div);
+  });
+}
+
+document.getElementById("addNoteBtn").addEventListener("click",addNote);
+document.getElementById("noteInput").addEventListener("keydown",e=>{if(e.key==="Enter")addNote()});
+function addNote(){
+  const inp=document.getElementById("noteInput");
+  const v=inp.value.trim();
+  if(!v)return;
+  state.notes.push({text:v,done:false});
+  inp.value="";
+  save();renderNotes();
+}
+
+/* SAVED PRESETS */
+function renderPresets(){
+  const el=document.getElementById("presetList");
+  if(!el)return;
+  el.innerHTML="";
+  if(!state.savedPresets.length){
+    el.innerHTML='<p style="color:var(--dim);font-size:13px">Noch keine Abläufe gespeichert.</p>';
+    return;
+  }
+  state.savedPresets.forEach((p,i)=>{
+    const row=document.createElement("div");
+    row.className="sched-item";
+    row.style.cursor="pointer";
+    const name=document.createElement("span");
+    name.style.fontWeight="600";
+    name.textContent=p.name;
+    const info=document.createElement("span");
+    info.className="sched-dur";
+    info.textContent=minsToTime(p.morningStart)+" – "+p.morningItems.length+" Morgen, "+p.eveningItems.length+" Abend";
+    const actions=document.createElement("div");
+    actions.style.cssText="display:flex;gap:4px";
+    const loadBtn=document.createElement("button");
+    loadBtn.className="btn btn-sm";loadBtn.textContent="Laden";
+    loadBtn.addEventListener("click",()=>{
+      state.morningStart=p.morningStart;
+      state.morningItems=structuredClone(p.morningItems);
+      state.eveningStart=p.eveningStart;
+      state.eveningItems=structuredClone(p.eveningItems);
+      save();renderSchedules();renderPresets();
+    });
+    const delBtn=document.createElement("button");
+    delBtn.className="sched-del";delBtn.textContent="−";
+    delBtn.addEventListener("click",e=>{
+      e.stopPropagation();
+      state.savedPresets.splice(i,1);
+      save();renderPresets();
+    });
+    actions.append(loadBtn,delBtn);
+    row.append(name,info,actions);
+    el.appendChild(row);
+  });
+}
+
+document.getElementById("savePresetBtn").addEventListener("click",()=>{
+  const name=prompt("Name für diesen Tagesablauf:");
+  if(!name||!name.trim())return;
+  state.savedPresets.push({
+    name:name.trim(),
+    morningStart:state.morningStart,
+    morningItems:structuredClone(state.morningItems),
+    eveningStart:state.eveningStart,
+    eveningItems:structuredClone(state.eveningItems),
+    savedAt:new Date().toLocaleDateString("de-DE")
+  });
+  save();renderPresets();
+});
+
+/* CUSTOM HABITS */
+function renderCustomHabits(){
+  const el=document.getElementById("customHabits");
+  if(!el)return;
+  el.innerHTML="";
+  state.customHabits.forEach((h,i)=>{
+    const card=document.createElement("div");
+    card.className="card card-err";
+    card.style.position="relative";
+    const title=document.createElement("h3");
+    title.textContent=h.name;
+    const desc=document.createElement("p");
+    desc.textContent=h.desc;
+    const del=document.createElement("button");
+    del.className="sched-del";
+    del.style.cssText="position:absolute;top:12px;right:12px";
+    del.textContent="−";
+    del.addEventListener("click",()=>{state.customHabits.splice(i,1);save();renderCustomHabits()});
+    card.append(title,desc,del);
+    el.appendChild(card);
+  });
+}
+
+document.getElementById("addHabitBtn").addEventListener("click",()=>{
+  const n=document.getElementById("habitNameIn").value.trim();
+  const d=document.getElementById("habitDescIn").value.trim();
+  if(!n)return;
+  state.customHabits.push({name:n,desc:d||"Trigger identifizieren, Ersatzhandlung finden."});
+  document.getElementById("habitNameIn").value="";
+  document.getElementById("habitDescIn").value="";
+  save();renderCustomHabits();
+});
+document.getElementById("habitNameIn").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("addHabitBtn").click()});
+
+/* RENDER ALL */
+function renderAll(){
+  renderDashboard();
+  if(document.getElementById("todayTaskList"))renderTaskList(state.todayTasks,"todayTaskList","todayTasks");
+  if(document.getElementById("tomorrowTaskList"))renderTaskList(state.tomorrowTasks,"tomorrowTaskList","tomorrowTasks");
+  renderTaskList(state.weeklyRoutines,"weeklyTaskList","weeklyRoutines");
+  renderTaskList(state.goals,"goalsList","goals");
+  renderWeekGrid();
+  renderSchedules();
+  renderMoodboard();
+  renderCustomHabits();
+  renderPresets();
+  renderMeals();
+  renderNotes();
+  const dateEl=document.getElementById("todayDate");
+  if(dateEl){
+    const now=new Date();
+    const days=["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+    const months=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+    dateEl.textContent=days[now.getDay()]+", "+now.getDate()+". "+months[now.getMonth()]+" "+now.getFullYear();
+  }
+}
+
+/* EVENING REMINDER */
+function checkReminder(){
+  const now=new Date();
+  const h=now.getHours();
+  if(h>=20&&h<22){
+    const todayKey="reminder_"+now.toDateString();
+    if(!sessionStorage.getItem(todayKey)){
+      document.getElementById("reminderBar").classList.add("show");
+      sessionStorage.setItem(todayKey,"1");
+    }
+  }
+}
+
+/* NOTIFICATIONS */
+function requestNotifications(){
+  if("Notification" in window && Notification.permission==="default"){
+    Notification.requestPermission();
+  }
+}
+
+function scheduleNotification(){
+  if("Notification" in window && Notification.permission==="granted"){
+    const now=new Date();
+    const evening=new Date(now);evening.setHours(20,0,0,0);
+    if(now<evening){
+      const delay=evening-now;
+      setTimeout(()=>{
+        new Notification("Routines",{body:"Zeit, den morgigen Tag zu planen."});
+      },delay);
+    }
+  }
+}
+
+/* INIT */
+if(!state.morningItems||!state.morningItems.length||!state.eveningItems||!state.eveningItems.length){
+  forceScheduleReset();
+}
+checkWeeklyReset();
+updateStreak();
+renderAll();
+checkReminder();
+requestNotifications();
+scheduleNotification();
+
+if(state.savedAt){
+  document.getElementById("saveIndicator").textContent="Gespeichert: "+state.savedAt;
+}
+</script>
+</body>
+</html>
