@@ -63,6 +63,20 @@ ETSY_SHIPPING_PROFILE_ID
 ETSY_RETURN_POLICY_ID
 ```
 
+Automatischer Uploader:
+
+```bash
+python3 pod-etsy-starter-kit/scripts/create_etsy_drafts.py
+python3 pod-etsy-starter-kit/scripts/create_etsy_drafts.py --only DOG-0001 --execute
+python3 pod-etsy-starter-kit/scripts/create_etsy_drafts.py --execute
+```
+
+Details stehen in:
+
+```text
+pod-etsy-starter-kit/docs/etsy-draft-uploader.md
+```
+
 Danach:
 
 1. Listing als Draft erstellen.
