@@ -1,0 +1,101 @@
+ID,Nische,Subnische,Zielgruppe,Anlass,Spruch,Designrichtung,Hauptkeyword,Risiko
+1,Geburtstag,Jahrgang 1984,Mann,Geburtstag,Legende seit 1984,Vintage Badge,jahrgang 1984 shirt,niedrig
+2,Geburtstag,Jahrgang 1990,Unisex,Geburtstag,Original seit 1990,Retro Typografie,jahrgang 1990 shirt,niedrig
+3,Geburtstag,Jahrgang 1979,Mann,Geburtstag,"Baujahr 1979, laeuft noch",Werkstatt Vintage,baujahr 1979 shirt,niedrig
+4,Geburtstag,Jahrgang 1988,Unisex,Geburtstag,"Vintage 1988, streng limitiert",Vintage Label,jahrgang 1988 shirt,niedrig
+5,Geburtstag,40 Geburtstag,Unisex,Geburtstag,"40 Jahre jung, kein bisschen leise",Party Typografie,40 geburtstag shirt,niedrig
+6,Geburtstag,50 Geburtstag,Mann,Geburtstag,50 und immer noch gefaehrlich charmant,Bold Typografie,50 geburtstag shirt,niedrig
+7,Geburtstag,30 Geburtstag,Unisex,Geburtstag,30 Jahre Premiumqualitaet,Premium Label,30 geburtstag shirt,niedrig
+8,Geburtstag,Jahrgang 1995,Unisex,Geburtstag,Seit 1995 im Spiel,Sportliche Typografie,jahrgang 1995 shirt,niedrig
+9,Geburtstag,Jahrgang 2000,Unisex,Geburtstag,"Jahrgang 2000, digital geboren",Minimal Pixel,jahrgang 2000 shirt,niedrig
+10,Geburtstag,60 Geburtstag,Unisex,Geburtstag,"60 Jahre Erfahrung, null Geduld",Vintage Typografie,60 geburtstag shirt,niedrig
+11,Mama,Kaffee Mama,Frau,Muttertag,Mama braucht Kaffee,Minimal Coffee,mama kaffee shirt,niedrig
+12,Papa,Handwerker Papa,Mann,Vatertag,Papa repariert das schon,Werkzeug Icon,papa shirt,niedrig
+13,Mama,Alltag Mama,Frau,Alltag,Mama Modus immer an,Modern Typografie,mama shirt,niedrig
+14,Papa,Gamer Papa,Mann,Vatertag,Papa Level unbesiegbar,Generic Gaming,papa gamer shirt,niedrig
+15,Mama,Herz Mama,Frau,Muttertag,Beste Mama mit Herz und Humor,Herz Typografie,beste mama shirt,niedrig
+16,Papa,Grill Papa,Mann,Vatertag,Papa der Grillmeister,BBQ Typografie,grillmeister papa shirt,niedrig
+17,Mama,Muede Mama,Frau,Alltag,"Mama kann alles, ausser schlafen",Coffee Sleep Humor,mama lustig shirt,niedrig
+18,Papa,Familie Papa,Mann,Vatertag,"Papa weiss alles, fragt Mama",Humor Typografie,papa geschenk shirt,niedrig
+19,Mama,Neue Mama,Frau,Geburt,Mama seit 2024,Minimal Label,mama seit 2024 shirt,niedrig
+20,Papa,Neuer Papa,Mann,Geburt,Papa seit 2024,Minimal Label,papa seit 2024 shirt,niedrig
+21,Hundebesitzer,Hundemama,Frau,Alltag,Hundehaare sind mein Glitzer,Pfoten Typografie,hundemama shirt,niedrig
+22,Hundebesitzer,Hundeliebe,Unisex,Alltag,Ohne Hund ist alles doof,Minimal Paw,hundeliebe shirt,niedrig
+23,Hundebesitzer,Hundeluxus,Unisex,Alltag,"Ich arbeite hart, damit mein Hund Luxus hat",Humor Typografie,hundebesitzer shirt,niedrig
+24,Hundebesitzer,Hundemama,Frau,Geburtstag,Hundemama mit Herz,Herz Pfote,hundemama geschenk,niedrig
+25,Hundebesitzer,Hundepapa,Mann,Geburtstag,Hundepapa mit Leckerli,Leckerli Icon,hundepapa shirt,niedrig
+26,Hundebesitzer,Hundeversteher,Unisex,Alltag,Mein Hund versteht mich,Minimal Line Art,hunde shirt,niedrig
+27,Hundebesitzer,Zuhause,Unisex,Alltag,"Zuhause ist, wo mein Hund ist",Home Paw,hundeliebe shirt,niedrig
+28,Hundebesitzer,Pfotenliebe,Unisex,Alltag,Pfotenliebe,Simple Script,pfotenliebe shirt,niedrig
+29,Hundebesitzer,Gassi,Unisex,Alltag,Gassi ist mein Cardio,Sneaker Paw,gassi shirt,niedrig
+30,Hundebesitzer,Prioritaeten,Unisex,Alltag,"Erst der Hund, dann der Rest",Bold Typografie,hundebesitzer geschenk,niedrig
+31,Berufe,Erzieherin,Frau,Danke Geschenk,Erzieherin mit Herz und Nerven aus Stahl,Herz Typografie,erzieherin shirt,niedrig
+32,Berufe,Pflegekraft,Unisex,Danke Geschenk,"Pflegekraft: muede, aber magisch",Clean Typografie,pflegekraft shirt,niedrig
+33,Berufe,Handwerker,Mann,Alltag,Handwerker koennen das,Werkzeug Badge,handwerker shirt,niedrig
+34,Berufe,Elektriker,Mann,Alltag,Elektriker unter Strom,Blitz Icon,elektriker shirt,niedrig
+35,Berufe,Lehrer,Unisex,Danke Geschenk,"Lehrer: Ich erklaere es nochmal",Tafel Typografie,lehrer shirt,niedrig
+36,Berufe,Buero,Unisex,Alltag,Bueroheld mit Kaffeebecher,Coffee Icon,buero shirt,niedrig
+37,Berufe,Feuerwehr,Unisex,Geburtstag,Feuerwehr im Herzen,Flamme Herz,feuerwehr shirt,niedrig
+38,Berufe,Krankenschwester,Frau,Danke Geschenk,Krankenschwester mit Superkraft,Herzlinie,krankenschwester shirt,niedrig
+39,Berufe,Mechaniker,Mann,Alltag,Mechaniker aus Leidenschaft,Gear Icon,mechaniker shirt,niedrig
+40,Berufe,Koch,Unisex,Alltag,Koch mit Geschmack und Stressresistenz,Chef Typografie,koch shirt,niedrig
+41,Hobbys,Angeln,Mann,Geburtstag,Angeln ist Therapie,Outdoor Typografie,angler shirt,niedrig
+42,Hobbys,Camping,Unisex,Urlaub,Camping ist mein Luxus,Camp Icon,camping shirt,niedrig
+43,Hobbys,Wandern,Unisex,Outdoor,Wandern statt Warten,Mountain Minimal,wandern shirt,niedrig
+44,Hobbys,Grillen,Mann,Vatertag,"Grillen ist kein Hobby, es ist Berufung",BBQ Badge,grillen shirt,niedrig
+45,Hobbys,Garten,Frau,Alltag,Gartenarbeit macht gluecklich,Floral Minimal,garten shirt,niedrig
+46,Hobbys,Lesen,Frau,Geschenk,Lesen ist mein Abenteuer,Book Typography,lesen shirt,niedrig
+47,Hobbys,Naehen,Frau,Geschenk,Naehen ist mein Yoga,Needle Icon,naehen shirt,niedrig
+48,Hobbys,Kaffee und Buecher,Frau,Alltag,"Kaffee, Buecher, Ruhe",Cozy Typografie,buecher shirt,niedrig
+49,Hobbys,Fahrrad,Unisex,Outdoor,Fahrradfahren macht frei,Bike Line Art,fahrrad shirt,niedrig
+50,Hobbys,Heimwerken,Mann,Alltag,Heimwerken statt Meckern,Tool Icon,heimwerker shirt,niedrig
+51,Fitness,Disziplin,Unisex,Training,"Kein Schmerz, nur Charakterbildung",Bold Gym,fitness shirt,niedrig
+52,Fitness,Gym,Unisex,Training,"Gym heute, Ausreden morgen",Minimal Dumbbell,gym shirt,niedrig
+53,Fitness,Training,Unisex,Training,Trainieren statt jammern,Strong Typografie,training shirt,niedrig
+54,Fitness,Kaffee,Frau,Training,Kniebeugen und Kaffee,Coffee Dumbbell,fitness frau shirt,niedrig
+55,Fitness,Staerke,Frau,Training,Stark ist das neue Schoen,Modern Typography,stark shirt,niedrig
+56,Fitness,Cardio Humor,Unisex,Training,"Cardio? Ich dachte, das heisst Kaffee",Humor Typografie,cardio shirt,niedrig
+57,Fitness,Muskelkater,Unisex,Training,Muskelkater ist Applaus,Bold Gym,muskelkater shirt,niedrig
+58,Fitness,Humor,Unisex,Training,Fitness mit Humor,Minimal Gym,fitness geschenk,niedrig
+59,Fitness,Lifestyle,Unisex,Training,"Heben, essen, schlafen",Gym Cycle,gym geschenk,niedrig
+60,Fitness,Power,Unisex,Training,Trainingsmodus aktiviert,Modern Sport,fitness shirt,niedrig
+61,Handwerker,Werkzeug,Mann,Alltag,Meister der Schrauben,Tool Badge,handwerker shirt,niedrig
+62,Handwerker,Messen,Mann,Alltag,"Ich messe zweimal, fluche einmal",Werkstatt Humor,handwerker lustig,niedrig
+63,Handwerker,Werkzeug,Mann,Alltag,Werkzeug statt Worte,Bold Tool,werkzeug shirt,niedrig
+64,Handwerker,Holz,Mann,Alltag,Holz im Herzen,Wood Grain,schreiner shirt,niedrig
+65,Handwerker,Schrauber,Mann,Alltag,Schrauber aus Leidenschaft,Wrench Icon,schrauber shirt,niedrig
+66,Handwerker,Saege,Mann,Alltag,Saegemehl ist Maennerglitzer,Woodshop Vintage,heimwerker shirt,niedrig
+67,Handwerker,Bau,Mann,Alltag,"Beton kann warten, Kaffee nicht",Construction Coffee,bauarbeiter shirt,niedrig
+68,Handwerker,Akkuschrauber,Mann,Alltag,Der Akkuschrauber ruft,Tool Typography,handwerker geschenk,niedrig
+69,Handwerker,Handwerk,Unisex,Alltag,Handwerk hat goldenen Boden,Classic Badge,handwerk shirt,niedrig
+70,Handwerker,Macher,Mann,Alltag,Ohne mich wackelt alles,Funny Tool,handwerker humor,niedrig
+71,Gaming,Runden,Unisex,Geburtstag,Nur noch eine Runde,Pixel Typografie,gamer shirt,niedrig
+72,Gaming,Mindset,Unisex,Alltag,Respawn statt Aufgeben,Generic Gaming,gaming shirt,niedrig
+73,Gaming,Geburtstag 40,Unisex,Geburtstag,Level 40 freigeschaltet,Pixel Badge,level 40 shirt,niedrig
+74,Gaming,Lifestyle,Unisex,Alltag,Gamer seit Kindheit,Retro Pixel,gamer geschenk,niedrig
+75,Gaming,Nacht,Unisex,Alltag,Schlaf ist optional,Neon Typography,zocker shirt,niedrig
+76,Gaming,Loot,Unisex,Alltag,"Looten, leveln, leben",Generic RPG Text,gaming geschenk,niedrig
+77,Gaming,Kaffee,Unisex,Alltag,"AFK, bin Kaffee holen",Minimal Pixel,afk shirt,niedrig
+78,Gaming,Alltag,Unisex,Alltag,Bosskampf Alltag,Generic Boss Text,gamer lustig,niedrig
+79,Gaming,Pixel,Unisex,Alltag,Pixel im Herzen,Pixel Heart,gamer shirt,niedrig
+80,Gaming,Controller,Unisex,Alltag,Controller statt Stress,Generic Controller,gaming shirt,niedrig
+81,Alltag,Kaffee,Unisex,Alltag,Heute leider keine Menschen,Minimal Humor,lustiges shirt,niedrig
+82,Alltag,Kaffee,Unisex,Alltag,"Kaffee zuerst, Realitaet spaeter",Coffee Typografie,kaffee shirt,niedrig
+83,Alltag,Energie,Unisex,Alltag,"Ich bin nicht faul, ich lade nur",Battery Icon,lustiges shirt,niedrig
+84,Alltag,Laune,Unisex,Alltag,Gute Laune wird ueberbewertet,Bold Text,humor shirt,niedrig
+85,Alltag,Introvertiert,Unisex,Alltag,Sozialakku leer,Battery Minimal,introvertiert shirt,niedrig
+86,Alltag,Kaffee,Unisex,Alltag,"Ich hoere Stimmen, sie wollen Kaffee",Coffee Humor,kaffee geschenk,niedrig
+87,Alltag,Humor,Unisex,Alltag,Nett war gestern,Minimal Bold,lustiges shirt,niedrig
+88,Alltag,Kaffee,Unisex,Alltag,Mein Humor ist schwarz wie mein Kaffee,Coffee Dark,kaffee shirt,niedrig
+89,Alltag,Montag,Unisex,Alltag,Montag ist ein Gefuehl,Minimal Humor,montag shirt,niedrig
+90,Alltag,Erklaerung,Unisex,Alltag,"Ich kann das erklaeren, will aber nicht",Dry Humor,lustiges shirt,niedrig
+91,Kombi,Hundemama Jahrgang,Frau,Geburtstag,Hundemama Jahrgang 1988,Paw Vintage,hundemama 1988 shirt,niedrig
+92,Kombi,Grill Papa,Mann,Vatertag,Grillmeister seit 1980,BBQ Vintage,grillmeister shirt,niedrig
+93,Kombi,Erzieherin Kaffee,Frau,Danke Geschenk,Erzieherin mit Kaffee und Herz,Coffee Heart,erzieherin geschenk,niedrig
+94,Kombi,Gamer Papa,Mann,Vatertag,Gamer Papa seit 2024,Pixel Label,gamer papa shirt,niedrig
+95,Kombi,Handwerker Opa,Mann,Geburtstag,Handwerker Opa mit Stil,Tool Vintage,opa handwerker shirt,niedrig
+96,Kombi,Fitness Mama,Frau,Alltag,Fitness Mama mit Power,Dumbbell Heart,fitness mama shirt,niedrig
+97,Kombi,Camping Papa,Mann,Vatertag,Camping Papa braucht keinen Luxus,Camp Vintage,camping papa shirt,niedrig
+98,Kombi,Pflege Jahrgang,Frau,Geburtstag,Krankenschwester seit 1995,Heartline Vintage,krankenschwester shirt,niedrig
+99,Kombi,Angler Opa,Mann,Geburtstag,Angler Opa mit Geduld,Fishing Minimal,angler opa shirt,niedrig
+100,Kombi,Mama Level,Frau,Geburtstag,Mama Level 30 freigeschaltet,Generic Level,mama level shirt,niedrig

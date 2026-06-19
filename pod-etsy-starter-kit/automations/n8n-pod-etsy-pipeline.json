@@ -1,0 +1,186 @@
+{
+  "name": "POD Etsy Draft Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "POD Etsy Draft Pipeline\n\nZiel: Google-Sheet-Zeilen mit Status \"QC Approved\" in vorbereitete Draft-Daten umwandeln.\n\nWichtig: Etsy-Live-Schaltung bleibt manuell, bis Rechts- und Qualitaetskontrolle stabil sind.",
+        "height": 260,
+        "width": 420
+      },
+      "id": "sticky-overview",
+      "name": "README",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        -260
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      design_id: 'DOG-0001',\n      status: 'QC Approved',\n      niche: 'Hundebesitzer',\n      target_group: 'Hundemama',\n      occasion: 'Geburtstag',\n      claim: 'Gassi ist mein Cardio',\n      main_keyword: 'hundemama shirt',\n      product: 'Unisex T-Shirt',\n      pod_provider: 'Printify',\n      design_file_url: 'https://example.com/design.png',\n      mockup_file_url: 'https://example.com/mockup.png'\n    }\n  }\n];"
+      },
+      "id": "example-sheet-row",
+      "name": "Example Sheet Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -500,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.status}}",
+              "operation": "equals",
+              "value2": "QC Approved"
+            }
+          ]
+        }
+      },
+      "id": "status-gate",
+      "name": "Only QC Approved",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $json;\n\nconst title = `${item.target_group} Shirt ${item.claim}, Geschenk fuer ${item.target_group}, ${item.product}`;\nconst tags = [\n  item.main_keyword,\n  'hundeliebe',\n  'gassi shirt',\n  'hunde geschenk',\n  'shirt frau',\n  'lustiges shirt',\n  'hundebesitzer',\n  'pfoten shirt',\n  'geschenk frau',\n  'hunde mama',\n  't shirt hund',\n  'haustier shirt',\n  'cardio shirt'\n];\n\nreturn [{\n  json: {\n    ...item,\n    etsy_title: title,\n    etsy_tags: tags.join(','),\n    etsy_description: `Lustiges ${item.product} fuer ${item.target_group}. Das Produkt wird erst nach Bestellung produziert. Bitte Groessentabelle und Varianten pruefen.`,\n    qc_required_before_publish: true\n  }\n}];"
+      },
+      "id": "build-listing-data",
+      "name": "Build Listing Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "Optional ersetzen:\n\n1. Google Sheets Node statt Example Sheet Row\n2. Claude/OpenAI HTTP Request fuer Titel, Tags und Beschreibung\n3. Printify API Request fuer Produkt-Draft\n4. Etsy API Request nur fuer Drafts\n5. Rueckschreiben ins Sheet: Status = Etsy Draft\n\nNie automatisch Status = Live setzen.",
+        "height": 260,
+        "width": 360
+      },
+      "id": "sticky-next-steps",
+      "name": "Implementation Notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const required = ['design_id', 'claim', 'design_file_url', 'mockup_file_url', 'etsy_title', 'etsy_tags', 'etsy_description'];\nconst missing = required.filter((key) => !$json[key]);\n\nif (missing.length) {\n  return [{ json: { ...$json, automation_status: 'FAILED_VALIDATION', missing_fields: missing.join(',') } }];\n}\n\nconst forbiddenHints = ['disney', 'nike', 'adidas', 'star wars', 'harry potter', 'pokemon', 'fifa'];\nconst haystack = `${$json.claim} ${$json.etsy_title} ${$json.etsy_tags} ${$json.etsy_description}`.toLowerCase();\nconst matched = forbiddenHints.filter((term) => haystack.includes(term));\n\nif (matched.length) {\n  return [{ json: { ...$json, automation_status: 'FAILED_FORBIDDEN_HINT', forbidden_hints: matched.join(',') } }];\n}\n\nreturn [{ json: { ...$json, automation_status: 'READY_FOR_DRAFT_CREATION' } }];"
+      },
+      "id": "validate-before-draft",
+      "name": "Validate Before Draft",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    ...$json,\n    printify_payload_preview: {\n      title: $json.etsy_title,\n      description: $json.etsy_description,\n      tags: $json.etsy_tags,\n      images: [$json.design_file_url, $json.mockup_file_url],\n      publish: false\n    },\n    next_manual_step: 'Create Printify/Etsy draft, inspect preview, then publish manually if QC passes.'\n  }\n}];"
+      },
+      "id": "draft-payload-preview",
+      "name": "Draft Payload Preview",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Example Sheet Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Example Sheet Row": {
+      "main": [
+        [
+          {
+            "node": "Only QC Approved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only QC Approved": {
+      "main": [
+        [
+          {
+            "node": "Build Listing Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Build Listing Data": {
+      "main": [
+        [
+          {
+            "node": "Validate Before Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Before Draft": {
+      "main": [
+        [
+          {
+            "node": "Draft Payload Preview",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-06-19T09:02:00.000Z",
+  "versionId": "starter-kit"
+}
