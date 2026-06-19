@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="4500" height="5400" viewBox="0 0 4500 5400" role="img" aria-labelledby="title desc">
+  <title id="title">Nur noch eine Runde T-Shirt Design</title>
+  <desc id="desc">Markenfreies generisches Gaming T-Shirt Design mit Pixel-Optik und dem Text Nur noch eine Runde.</desc>
+  <style>
+    .white{fill:#f5f7ff}
+    .green{fill:#54f27a}
+    .purple{fill:#8b5cf6}
+    .stroke{fill:none;stroke:#f5f7ff;stroke-width:42;stroke-linecap:round;stroke-linejoin:round}
+    .pixel{font-family:Arial Black,Arial,Helvetica,sans-serif;font-weight:900;letter-spacing:16px;text-anchor:middle}
+    .sub{font-family:Arial,Helvetica,sans-serif;font-weight:900;letter-spacing:20px;text-anchor:middle}
+  </style>
+  <g transform="translate(2250 920)">
+    <rect class="purple" x="-720" y="-250" width="1440" height="500" rx="160"/>
+    <rect class="white" x="-505" y="-70" width="260" height="85" rx="18"/>
+    <rect class="white" x="-418" y="-158" width="85" height="260" rx="18"/>
+    <circle class="green" cx="345" cy="-65" r="58"/>
+    <circle class="green" cx="500" cy="65" r="58"/>
+    <circle class="white" cx="-190" cy="155" r="34"/>
+    <circle class="white" cx="190" cy="155" r="34"/>
+  </g>
+  <text class="sub green" x="2250" y="1690" font-size="205">AFK IST KEINE OPTION</text>
+  <text class="pixel white" x="2250" y="2300" font-size="410">NUR NOCH</text>
+  <text class="pixel green" x="2250" y="2950" font-size="470">EINE</text>
+  <text class="pixel white" x="2250" y="3590" font-size="470">RUNDE</text>
+  <g transform="translate(2250 4010)">
+    <path class="stroke" d="M-900 0h1800"/>
+    <rect class="green" x="-1040" y="-40" width="80" height="80"/>
+    <rect class="green" x="960" y="-40" width="80" height="80"/>
+  </g>
+  <text class="sub purple" x="2250" y="4450" font-size="160">GENERIC GAMER EDITION</text>
+</svg>

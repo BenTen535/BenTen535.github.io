@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="4500" height="5400" viewBox="0 0 4500 5400" role="img" aria-labelledby="title desc">
+  <title id="title">Legende seit 1984 T-Shirt Design</title>
+  <desc id="desc">Markenfreies Vintage Geburtstagsshirt Design mit dem Text Legende seit 1984.</desc>
+  <style>
+    .cream{fill:#f6edd7}
+    .orange{fill:#d98232}
+    .outline{fill:none;stroke:#f6edd7;stroke-width:44;stroke-linecap:round;stroke-linejoin:round}
+    .outline2{fill:none;stroke:#d98232;stroke-width:30;stroke-linecap:round;stroke-linejoin:round}
+    .main{font-family:Georgia,Times New Roman,serif;font-weight:900;letter-spacing:8px;text-anchor:middle}
+    .sans{font-family:Arial,Helvetica,sans-serif;font-weight:900;letter-spacing:20px;text-anchor:middle}
+  </style>
+  <g transform="translate(2250 2700)">
+    <path class="outline" d="M0-2020 360-1760 805-1825 1000-1420 1420-1220 1350-760 1620-400 1350 0 1420 455 1000 655 805 1060 360 995 0 1260-360 995-805 1060-1000 655-1420 455-1350 0-1620-400-1350-760-1420-1220-1000-1420-805-1825-360-1760Z"/>
+    <path class="outline2" d="M0-1760 285-1555 635-1605 790-1285 1125-1125 1070-760 1280-455 1070-140 1125 225 790 385 635 705 285 655 0 860-285 655-635 705-790 385-1125 225-1070-140-1280-455-1070-760-1125-1125-790-1285-635-1605-285-1555Z"/>
+  </g>
+  <text class="sans orange" x="2250" y="1530" font-size="210">ORIGINAL</text>
+  <text class="main cream" x="2250" y="2360" font-size="570">LEGENDE</text>
+  <text class="sans cream" x="2250" y="2820" font-size="240">SEIT</text>
+  <text class="sans orange" x="2250" y="3630" font-size="840">1984</text>
+  <g transform="translate(2250 3990)">
+    <path class="outline2" d="M-780 0h1560"/>
+    <circle class="orange" cx="-910" cy="0" r="40"/>
+    <circle class="orange" cx="910" cy="0" r="40"/>
+  </g>
+  <text class="sans cream" x="2250" y="4350" font-size="160">LIMITIERTER JAHRGANG</text>
+</svg>

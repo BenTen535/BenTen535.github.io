@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="4500" height="5400" viewBox="0 0 4500 5400" role="img" aria-labelledby="title desc">
+  <title id="title">Gassi ist mein Cardio T-Shirt Design</title>
+  <desc id="desc">Markenfreies Hundebesitzer T-Shirt Design mit Pfoten und dem Text Gassi ist mein Cardio.</desc>
+  <style>
+    .cream{fill:#f7f0df}
+    .tan{fill:#c7a36c}
+    .dark{fill:#1f1f1f}
+    .line{fill:none;stroke:#f7f0df;stroke-width:38;stroke-linecap:round;stroke-linejoin:round}
+    .main{font-family:Arial,Helvetica,sans-serif;font-weight:900;letter-spacing:18px;text-anchor:middle}
+    .sub{font-family:Arial,Helvetica,sans-serif;font-weight:800;letter-spacing:12px;text-anchor:middle}
+  </style>
+  <g transform="translate(2250 690)">
+    <circle class="tan" cx="-470" cy="0" r="78"/>
+    <circle class="tan" cx="-320" cy="-110" r="70"/>
+    <circle class="tan" cx="-160" cy="-82" r="70"/>
+    <circle class="tan" cx="-20" cy="20" r="78"/>
+    <path class="tan" d="M-337 95c-70-18-142 36-158 107-21 91 55 151 152 141 94 8 171-45 157-134-12-75-77-133-151-114z"/>
+    <circle class="cream" cx="300" cy="0" r="78"/>
+    <circle class="cream" cx="450" cy="-110" r="70"/>
+    <circle class="cream" cx="610" cy="-82" r="70"/>
+    <circle class="cream" cx="750" cy="20" r="78"/>
+    <path class="cream" d="M433 95c-70-18-142 36-158 107-21 91 55 151 152 141 94 8 171-45 157-134-12-75-77-133-151-114z"/>
+  </g>
+  <text class="main cream" x="2250" y="1830" font-size="650">GASSI</text>
+  <path class="line" d="M1120 2030h2260"/>
+  <text class="sub tan" x="2250" y="2545" font-size="330">IST MEIN</text>
+  <text class="main cream" x="2250" y="3330" font-size="560">CARDIO</text>
+  <g transform="translate(2250 3860)">
+    <path class="line" d="M-430 160c185-260 675-260 860 0"/>
+    <path class="line" d="M-585 20c72-95 182-155 305-155 74 0 145 22 205 60"/>
+    <path class="line" d="M585 20c-72-95-182-155-305-155-74 0-145 22-205 60"/>
+    <circle class="tan" cx="-645" cy="-30" r="52"/>
+    <circle class="tan" cx="645" cy="-30" r="52"/>
+  </g>
+  <text class="sub cream" x="2250" y="4410" font-size="170">HUNDEMENSCH EDITION</text>
+</svg>

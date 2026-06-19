@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="4500" height="5400" viewBox="0 0 4500 5400" role="img" aria-labelledby="title desc">
+  <title id="title">Papa repariert das schon T-Shirt Design</title>
+  <desc id="desc">Markenfreies Papa und Handwerker T-Shirt Design mit Werkzeugmotiv.</desc>
+  <style>
+    .cream{fill:#f4ead6}
+    .steel{fill:#9aa0a6}
+    .gold{fill:#c9953d}
+    .stroke{fill:none;stroke:#f4ead6;stroke-width:42;stroke-linecap:round;stroke-linejoin:round}
+    .strokeGold{fill:none;stroke:#c9953d;stroke-width:36;stroke-linecap:round;stroke-linejoin:round}
+    .main{font-family:Arial Black,Arial,Helvetica,sans-serif;font-weight:900;letter-spacing:12px;text-anchor:middle}
+    .sub{font-family:Arial,Helvetica,sans-serif;font-weight:900;letter-spacing:18px;text-anchor:middle}
+  </style>
+  <g transform="translate(2250 880) rotate(-12)">
+    <path class="steel" d="M-640-95h915c95 0 172 77 172 172v36h-525v-65h-562z"/>
+    <path class="gold" d="M-710-160h235c75 0 135 60 135 135v260c0 75-60 135-135 135h-235z"/>
+    <rect class="cream" x="-760" y="-65" width="170" height="90" rx="30"/>
+    <rect class="cream" x="-760" y="90" width="170" height="90" rx="30"/>
+  </g>
+  <text class="sub gold" x="2250" y="1650" font-size="230">WERKSTATT-CHEF</text>
+  <text class="main cream" x="2250" y="2410" font-size="700">PAPA</text>
+  <text class="sub cream" x="2250" y="2940" font-size="290">REPARIERT</text>
+  <text class="sub gold" x="2250" y="3370" font-size="250">DAS SCHON</text>
+  <g transform="translate(2250 3810)">
+    <path class="stroke" d="M-840 0h1680"/>
+    <path class="strokeGold" d="M-520 235c220-155 820-155 1040 0"/>
+    <circle class="gold" cx="-970" cy="0" r="42"/>
+    <circle class="gold" cx="970" cy="0" r="42"/>
+  </g>
+  <text class="sub cream" x="2250" y="4380" font-size="150">FUER ALLE FAELLE</text>
+</svg>

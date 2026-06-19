@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="4500" height="5400" viewBox="0 0 4500 5400" role="img" aria-labelledby="title desc">
+  <title id="title">Erzieherin mit Herz und Nerven aus Stahl T-Shirt Design</title>
+  <desc id="desc">Markenfreies Berufsshirt Design fuer Erzieherinnen mit Herzsymbol und starkem Typografie-Layout.</desc>
+  <style>
+    .cream{fill:#fff4e8}
+    .rose{fill:#d96f77}
+    .mint{fill:#78b7a6}
+    .stroke{fill:none;stroke:#fff4e8;stroke-width:38;stroke-linecap:round;stroke-linejoin:round}
+    .main{font-family:Arial Black,Arial,Helvetica,sans-serif;font-weight:900;letter-spacing:6px;text-anchor:middle}
+    .sub{font-family:Arial,Helvetica,sans-serif;font-weight:900;letter-spacing:14px;text-anchor:middle}
+  </style>
+  <g transform="translate(2250 900)">
+    <path class="rose" d="M0 335C-405 80-610-110-610-355c0-180 145-325 325-325 117 0 224 62 285 159 61-97 168-159 285-159 180 0 325 145 325 325 0 245-205 435-610 690z"/>
+    <path class="mint" d="M-118 270c-170-111-280-213-330-318 109 29 217 30 323 2 112-30 219-90 325-182 72-63 150-116 235-160-4 197-171 383-435 658z" opacity=".75"/>
+  </g>
+  <text class="sub mint" x="2250" y="1630" font-size="205">BERUF MIT HERZ</text>
+  <text class="main cream" x="2250" y="2260" font-size="430">ERZIEHERIN</text>
+  <text class="sub rose" x="2250" y="2760" font-size="235">MIT HERZ UND</text>
+  <text class="main cream" x="2250" y="3380" font-size="390">NERVEN</text>
+  <text class="sub mint" x="2250" y="3840" font-size="255">AUS STAHL</text>
+  <g transform="translate(2250 4180)">
+    <path class="stroke" d="M-880 0h1760"/>
+    <circle class="rose" cx="-1040" cy="0" r="40"/>
+    <circle class="rose" cx="1040" cy="0" r="40"/>
+  </g>
+  <text class="sub cream" x="2250" y="4550" font-size="138">KITA-ALLTAG ERPROBT</text>
+</svg>
