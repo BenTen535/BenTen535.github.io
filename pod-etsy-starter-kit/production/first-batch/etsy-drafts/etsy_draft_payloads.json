@@ -1,0 +1,159 @@
+{
+  "notes": {
+    "purpose": "Draft-only Etsy listing payloads for the first POD batch.",
+    "important": "Do not publish before DPMA, EUIPO/TMview, Etsy and Google checks are completed.",
+    "required_placeholders": [
+      "ETSY_SHOP_ID",
+      "ETSY_TAXONOMY_ID_TSHIRT",
+      "ETSY_SHIPPING_PROFILE_ID",
+      "ETSY_RETURN_POLICY_ID"
+    ],
+    "image_upload_note": "Etsy listing images are uploaded after listing draft creation. Use exported PNG mockups, not only the SVG design files."
+  },
+  "defaults": {
+    "state": "draft",
+    "quantity": 999,
+    "who_made": "i_did",
+    "when_made": "made_to_order",
+    "is_supply": false,
+    "should_auto_renew": true,
+    "type": "physical",
+    "taxonomy_id": "ETSY_TAXONOMY_ID_TSHIRT",
+    "shipping_profile_id": "ETSY_SHIPPING_PROFILE_ID",
+    "return_policy_id": "ETSY_RETURN_POLICY_ID",
+    "materials": [
+      "cotton",
+      "polyester",
+      "print on demand"
+    ],
+    "processing_min": 2,
+    "processing_max": 7
+  },
+  "drafts": [
+    {
+      "design_id": "DOG-0001",
+      "source_svg": "production/first-batch/designs/DOG-0001-gassi-ist-mein-cardio.svg",
+      "recommended_png": "DOG-0001-gassi-ist-mein-cardio.png",
+      "title": "Hundemama Shirt Gassi ist mein Cardio, Geschenk fuer Hundebesitzerin, lustiges Hunde T-Shirt",
+      "description": "Lustiges Shirt fuer Hundemamas und Hundebesitzerinnen. Das Design mit dem Spruch \"Gassi ist mein Cardio\" passt perfekt fuer alle, die Spaziergaenge mit dem Hund als echtes Training sehen.\n\nIdeal als Geschenk fuer:\n- Hundemamas\n- Hundebesitzerinnen\n- Geburtstage\n- Weihnachten\n- kleine Alltagsueberraschungen\n\nProduktdetails:\n- Print-on-Demand Produkt\n- Produktion erst nach Bestellung\n- Verschiedene Groessen und Farben je nach Verfuegbarkeit\n- Bequemes Alltagsshirt mit gut lesbarem Design\n\nPflegehinweise:\n- Auf links waschen\n- Nicht direkt ueber den Druck buegeln\n- Nicht bleichen\n- Niedrige Temperatur empfohlen\n\nHinweis:\nFarben koennen je nach Bildschirm leicht abweichen. Bitte pruefe vor der Bestellung die Groessentabelle und alle Produktvarianten.",
+      "tags": [
+        "hundemama",
+        "hundeliebe",
+        "gassi shirt",
+        "hunde geschenk",
+        "shirt frau",
+        "lustiges shirt",
+        "hundebesitzer",
+        "pfoten shirt",
+        "geschenk frau",
+        "hunde mama",
+        "t shirt hund",
+        "haustier shirt",
+        "cardio shirt"
+      ],
+      "price": 24.99,
+      "alt_text": "T-Shirt Design mit deutschem Spruch Gassi ist mein Cardio, Pfoten und sportlichem Bogenmotiv.",
+      "qc_status": "Design Ready - Legal Check Pending"
+    },
+    {
+      "design_id": "BDAY-0001",
+      "source_svg": "production/first-batch/designs/BDAY-0001-legende-seit-1984.svg",
+      "recommended_png": "BDAY-0001-legende-seit-1984.png",
+      "title": "Legende seit 1984 T-Shirt, Jahrgang 1984 Geburtstag Geschenk, Vintage Shirt",
+      "description": "Vintage Geburtstagsshirt fuer den Jahrgang 1984. Der Spruch \"Legende seit 1984\" ist schlicht, humorvoll und eignet sich als Geschenkidee fuer Geburtstag, Party oder Familienfeier.\n\nIdeal als Geschenk fuer:\n- Jahrgang 1984\n- 40. Geburtstag\n- Papa, Bruder, Freund oder Kollege\n- Vintage-Shirt Fans\n\nProduktdetails:\n- Print-on-Demand Produkt\n- Produktion erst nach Bestellung\n- Verschiedene Groessen und Farben je nach Verfuegbarkeit\n- Retro-inspiriertes, gut lesbares Design\n\nPflegehinweise:\n- Auf links waschen\n- Nicht direkt ueber den Druck buegeln\n- Nicht bleichen\n- Niedrige Temperatur empfohlen\n\nHinweis:\nFarben koennen je nach Bildschirm leicht abweichen. Bitte pruefe vor der Bestellung die Groessentabelle und alle Produktvarianten.",
+      "tags": [
+        "1984 shirt",
+        "jahrgang 1984",
+        "geburtstag shirt",
+        "geschenk mann",
+        "vintage shirt",
+        "legende shirt",
+        "40 geburtstag",
+        "shirt herren",
+        "lustiges shirt",
+        "baujahr 1984",
+        "t shirt mann",
+        "retro shirt",
+        "geschenk papa"
+      ],
+      "price": 24.99,
+      "alt_text": "Vintage T-Shirt Design mit Badge-Form, dem Text Legende seit 1984 und Retro-Farben.",
+      "qc_status": "Design Ready - Legal Check Pending"
+    },
+    {
+      "design_id": "PAPA-0001",
+      "source_svg": "production/first-batch/designs/PAPA-0001-papa-repariert-das-schon.svg",
+      "recommended_png": "PAPA-0001-papa-repariert-das-schon.png",
+      "title": "Papa repariert das schon T-Shirt, Vatertag Geschenk, Handwerker Papa Shirt",
+      "description": "Humorvolles Papa-Shirt fuer alle Vaeter, die immer eine Loesung finden. Der Spruch \"Papa repariert das schon\" passt perfekt zu Heimwerkern, Schraubern und praktischen Papas.\n\nIdeal als Geschenk fuer:\n- Vatertag\n- Geburtstag\n- Weihnachten\n- Handwerker-Papas\n- Heimwerker und Schrauber\n\nProduktdetails:\n- Print-on-Demand Produkt\n- Produktion erst nach Bestellung\n- Verschiedene Groessen und Farben je nach Verfuegbarkeit\n- Werkstatt-inspiriertes Design ohne Markenbezug\n\nPflegehinweise:\n- Auf links waschen\n- Nicht direkt ueber den Druck buegeln\n- Nicht bleichen\n- Niedrige Temperatur empfohlen\n\nHinweis:\nFarben koennen je nach Bildschirm leicht abweichen. Bitte pruefe vor der Bestellung die Groessentabelle und alle Produktvarianten.",
+      "tags": [
+        "papa shirt",
+        "vatertag",
+        "geschenk papa",
+        "handwerker",
+        "papa geschenk",
+        "werkzeug shirt",
+        "lustiges shirt",
+        "vater shirt",
+        "t shirt papa",
+        "papa humor",
+        "heimwerker",
+        "papa geburtstag",
+        "repariert shirt"
+      ],
+      "price": 24.99,
+      "alt_text": "Werkstatt-T-Shirt Design mit dem Spruch Papa repariert das schon und generischem Werkzeugmotiv.",
+      "qc_status": "Design Ready - Legal Check Pending"
+    },
+    {
+      "design_id": "JOB-0001",
+      "source_svg": "production/first-batch/designs/JOB-0001-erzieherin-herz-nerven-stahl.svg",
+      "recommended_png": "JOB-0001-erzieherin-herz-nerven-stahl.png",
+      "title": "Erzieherin Shirt mit Herz und Nerven aus Stahl, Kita Geschenk, Berufsshirt",
+      "description": "Liebevolles Berufsshirt fuer Erzieherinnen mit Humor, Herz und starken Nerven. Das Design eignet sich als Geschenk fuer Kolleginnen, Kita-Team, Abschied, Geburtstag oder als kleine Anerkennung.\n\nIdeal als Geschenk fuer:\n- Erzieherinnen\n- Kita-Mitarbeiterinnen\n- Kolleginnen\n- Danke-Geschenke\n- Geburtstag oder Abschied\n\nProduktdetails:\n- Print-on-Demand Produkt\n- Produktion erst nach Bestellung\n- Verschiedene Groessen und Farben je nach Verfuegbarkeit\n- Gut lesbares Typografie-Design mit Herzmotiv\n\nPflegehinweise:\n- Auf links waschen\n- Nicht direkt ueber den Druck buegeln\n- Nicht bleichen\n- Niedrige Temperatur empfohlen\n\nHinweis:\nFarben koennen je nach Bildschirm leicht abweichen. Bitte pruefe vor der Bestellung die Groessentabelle und alle Produktvarianten.",
+      "tags": [
+        "erzieherin",
+        "erzieherin shirt",
+        "kita geschenk",
+        "berufsshirt",
+        "geschenk frau",
+        "kollegin geschenk",
+        "herz shirt",
+        "lustiges shirt",
+        "kita shirt",
+        "danke erzieherin",
+        "t shirt frau",
+        "kindergarten",
+        "pflegeleicht"
+      ],
+      "price": 24.99,
+      "alt_text": "T-Shirt Design fuer Erzieherinnen mit Herzsymbol und dem Text mit Herz und Nerven aus Stahl.",
+      "qc_status": "Design Ready - Legal Check Pending"
+    },
+    {
+      "design_id": "GAME-0001",
+      "source_svg": "production/first-batch/designs/GAME-0001-nur-noch-eine-runde.svg",
+      "recommended_png": "GAME-0001-nur-noch-eine-runde.png",
+      "title": "Gamer Shirt Nur noch eine Runde, Gaming Geschenk, lustiges Zocker T-Shirt",
+      "description": "Generisches Gaming-Shirt fuer Gamer und Zocker. Der Spruch \"Nur noch eine Runde\" ist kurz, humorvoll und funktioniert ohne Bezug zu einem bestimmten Spiel, einer Marke oder einem Franchise.\n\nIdeal als Geschenk fuer:\n- Gamer\n- Zocker\n- PC- und Konsolen-Fans\n- Geburtstag\n- Weihnachten\n\nProduktdetails:\n- Print-on-Demand Produkt\n- Produktion erst nach Bestellung\n- Verschiedene Groessen und Farben je nach Verfuegbarkeit\n- Generisches Pixel-Design ohne Marken- oder Spielreferenzen\n\nPflegehinweise:\n- Auf links waschen\n- Nicht direkt ueber den Druck buegeln\n- Nicht bleichen\n- Niedrige Temperatur empfohlen\n\nHinweis:\nFarben koennen je nach Bildschirm leicht abweichen. Bitte pruefe vor der Bestellung die Groessentabelle und alle Produktvarianten.",
+      "tags": [
+        "gamer shirt",
+        "gaming geschenk",
+        "zocker shirt",
+        "nur eine runde",
+        "gamer geschenk",
+        "pc gaming",
+        "lustiges shirt",
+        "shirt herren",
+        "geburtstag gamer",
+        "controller shirt",
+        "pixel shirt",
+        "t shirt gamer",
+        "gaming humor"
+      ],
+      "price": 24.99,
+      "alt_text": "Generisches Gaming T-Shirt Design mit Pixel-Optik, Controller-Symbol und dem Text Nur noch eine Runde.",
+      "qc_status": "Design Ready - Legal Check Pending"
+    }
+  ]
+}
