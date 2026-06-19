@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="theme-color" content="#000"/>
+<title>POD Etsy Playbook · Automatisierter Print-on-Demand Shop</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root{
+  --bg:#000;--s1:#0a0a0a;--s2:#141414;--s3:#222;
+  --brd:#2a2a2a;--txt:#e8e8e8;--mute:#888;--dim:#555;
+  --acc:#8b5cf6;--acc2:#22d3ee;--ok:#34d399;--warn:#fbbf24;--err:#f87171;
+  --r:14px;--r-sm:10px;--sh:0 4px 24px rgba(0,0,0,.5);
+  --sidebar-w:280px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--txt);line-height:1.55;overflow:hidden;height:100vh}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:4px}
+::selection{background:rgba(139,92,246,.3)}
+a{color:var(--acc2);text-decoration:none}
+a:hover{text-decoration:underline}
+
+.app{display:flex;height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--s1);border-right:1px solid var(--brd);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;z-index:100;transition:transform .3s ease}
+.sidebar-header{padding:20px;border-bottom:1px solid var(--brd)}
+.sidebar-header h1{font-size:21px;font-weight:800;color:#fff;letter-spacing:.5px;display:flex;align-items:center;gap:8px}
+.sidebar-header h1 .dot{width:10px;height:10px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc)}
+.sidebar-header p{font-size:12px;color:var(--mute);margin-top:4px}
+.nav-group{padding:12px 10px 4px}
+.nav-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);padding:0 10px;margin-bottom:6px}
+.nav-item{display:flex;align-items:center;gap:11px;padding:9px 14px;border-radius:var(--r-sm);color:var(--mute);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s ease;border:1px solid transparent}
+.nav-item:hover{color:var(--txt);background:var(--s2)}
+.nav-item.active{color:#fff;background:rgba(139,92,246,.12);border-color:rgba(139,92,246,.35)}
+.nav-badge{margin-left:auto;font-size:10px;font-weight:700;background:var(--s3);color:var(--mute);padding:2px 7px;border-radius:10px}
+.nav-item.active .nav-badge{background:rgba(139,92,246,.3);color:#fff}
+.nav-icon{width:20px;text-align:center;font-size:13px;flex-shrink:0;font-weight:700}
+.nav-divider{height:1px;background:var(--brd);margin:8px 16px}
+
+.main{flex:1;overflow-y:auto;overflow-x:hidden;padding:34px 44px 80px;position:relative}
+.view{display:none;max-width:1000px;animation:fadeUp .35s ease}
+.view.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.mobile-toggle{display:none;position:fixed;top:14px;left:14px;z-index:200;background:var(--s2);border:1px solid var(--brd);color:var(--txt);width:42px;height:42px;border-radius:var(--r-sm);font-size:18px;cursor:pointer}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:90}
+@media(max-width:860px){
+  .sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%)}
+  .sidebar.open{transform:none}
+  .overlay.show{display:block}
+  .mobile-toggle{display:flex;align-items:center;justify-content:center}
+  .main{padding:64px 18px 50px}
+}
+
+.kicker{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--acc);margin-bottom:8px}
+.view-title{font-size:30px;font-weight:800;margin-bottom:6px;letter-spacing:-.5px}
+.view-sub{color:var(--mute);font-size:15px;margin-bottom:28px;max-width:720px}
+h3{font-size:17px;font-weight:700;margin:26px 0 10px}
+h4{font-size:14px;font-weight:700;margin-bottom:6px}
+p{color:var(--txt);font-size:14px}
+.muted{color:var(--mute)}
+ul,ol{padding-left:20px;margin:8px 0}
+li{font-size:14px;color:var(--txt);margin:5px 0;line-height:1.6}
+li::marker{color:var(--acc)}
+strong{color:#fff}
+code{background:var(--s2);border:1px solid var(--brd);border-radius:6px;padding:1px 6px;font-size:12.5px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#d6bcfa}
+
+.card{background:var(--s1);border:1px solid var(--brd);border-radius:var(--r);padding:20px;box-shadow:var(--sh);margin-bottom:16px}
+.card h3{margin-top:0}
+.grid{display:grid;gap:14px;margin-bottom:18px}
+.g2{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.g4{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+.card-accent{border-left:3px solid var(--acc)}
+.card-ok{border-left:3px solid var(--ok)}
+.card-warn{border-left:3px solid var(--warn)}
+.card-err{border-left:3px solid var(--err)}
+
+.tip{background:var(--s2);border:1px solid var(--brd);border-radius:var(--r);padding:16px 18px;margin:18px 0;border-left:3px solid var(--acc2)}
+.tip h4{color:#fff;text-transform:uppercase;letter-spacing:.5px;font-size:12px}
+.tip.warn{border-left-color:var(--warn)}
+.tip.err{border-left-color:var(--err)}
+.tip.ok{border-left-color:var(--ok)}
+
+.stat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-bottom:24px}
+.stat{background:var(--s1);border:1px solid var(--brd);border-radius:var(--r);padding:18px;text-align:center}
+.stat-num{font-size:30px;font-weight:800;color:#fff}
+.stat-num.acc{color:var(--acc)}
+.stat-label{font-size:11.5px;color:var(--mute);margin-top:4px}
+
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px;background:var(--s1);border:1px solid var(--brd);border-radius:var(--r);overflow:hidden}
+th{background:var(--s2);text-align:left;padding:10px 12px;font-weight:700;color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--brd)}
+td{padding:10px 12px;border-bottom:1px solid var(--brd);color:var(--txt);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.table-wrap{overflow-x:auto;border-radius:var(--r)}
+
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;margin:2px}
+.tag-acc{background:rgba(139,92,246,.16);color:#c4b5fd}
+.tag-ok{background:rgba(52,211,153,.14);color:#6ee7b7}
+.tag-warn{background:rgba(251,191,36,.14);color:#fcd34d}
+.tag-err{background:rgba(248,113,113,.14);color:#fca5a5}
+.tag-n{background:var(--s3);color:var(--mute)}
+
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px;margin:18px 0}
+.flow-step{flex:1;min-width:140px;background:var(--s1);border:1px solid var(--brd);border-radius:var(--r);padding:14px;position:relative}
+.flow-step .n{font-size:11px;font-weight:700;color:var(--acc)}
+.flow-step h4{margin:6px 0 4px;font-size:14px}
+.flow-step p{font-size:12px;color:var(--mute)}
+.flow-arrow{display:flex;align-items:center;color:var(--dim);font-size:20px}
+@media(max-width:700px){.flow-arrow{transform:rotate(90deg)}}
+
+.acc-item{border:1px solid var(--brd);border-radius:var(--r-sm);margin-bottom:8px;overflow:hidden;background:var(--s1)}
+.acc-head{padding:13px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px;user-select:none}
+.acc-head:hover{background:var(--s2)}
+.acc-head .chev{margin-left:auto;color:var(--dim);transition:transform .2s}
+.acc-item.open .chev{transform:rotate(90deg)}
+.acc-body{display:none;padding:0 16px 16px;border-top:1px solid var(--brd)}
+.acc-item.open .acc-body{display:block}
+
+.check{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--s2);border:1px solid var(--brd);border-radius:var(--r-sm);margin:6px 0;cursor:pointer;transition:opacity .2s}
+.check input{accent-color:var(--acc);width:17px;height:17px;cursor:pointer;margin-top:1px;flex-shrink:0}
+.check.done{opacity:.5}
+.check.done .ctext{text-decoration:line-through}
+.ctext{font-size:13.5px}
+.ctext small{display:block;color:var(--mute);font-size:12px;margin-top:2px}
+
+.idea-tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.search{background:var(--s2);border:1px solid var(--brd);border-radius:var(--r-sm);color:var(--txt);padding:10px 14px;font-size:13px;font-family:inherit;outline:none;flex:1;min-width:200px}
+.search:focus{border-color:var(--acc)}
+.chip{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--brd);background:var(--s2);color:var(--mute);cursor:pointer;transition:all .15s}
+.chip:hover{color:var(--txt)}
+.chip.active{background:rgba(139,92,246,.16);color:#c4b5fd;border-color:rgba(139,92,246,.4)}
+.idea{background:var(--s1);border:1px solid var(--brd);border-radius:var(--r-sm);padding:13px 15px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start}
+.idea .num{font-size:12px;font-weight:700;color:var(--dim);min-width:30px}
+.idea .claim{font-weight:600;color:#fff;font-size:14px}
+.idea .meta{font-size:12px;color:var(--mute);margin-top:3px}
+
+.prompt-box{background:var(--s2);border:1px solid var(--brd);border-radius:var(--r-sm);padding:14px;margin:8px 0;position:relative}
+.prompt-box pre{white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:#d1d5db;line-height:1.6}
+.copy-btn{position:absolute;top:10px;right:10px;background:var(--s3);border:1px solid var(--brd);color:var(--mute);font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:600}
+.copy-btn:hover{color:#fff;border-color:var(--acc)}
+
+.listing{background:var(--s1);border:1px solid var(--brd);border-radius:var(--r);padding:16px 18px;margin-bottom:14px}
+.listing .lt{font-weight:700;color:#fff;font-size:14px;margin-bottom:6px}
+.listing .row{font-size:12.5px;margin:5px 0}
+.listing .row b{color:var(--mute);font-weight:600;display:inline-block;min-width:70px}
+.listing .tags-line{font-size:12px;color:#c4b5fd;margin-top:6px}
+
+.btn{background:var(--acc);color:#fff;border:none;border-radius:var(--r-sm);padding:10px 18px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:filter .15s}
+.btn:hover{filter:brightness(1.1)}
+.btn-ghost{background:var(--s2);border:1px solid var(--brd);color:var(--txt)}
+.btn-ghost:hover{border-color:var(--acc)}
+
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mute);margin:8px 0 18px}
+.legend span{display:flex;align-items:center;gap:6px}
+.dotc{width:9px;height:9px;border-radius:50%}
+
+.app-footer{padding:16px 20px;border-top:1px solid var(--brd);margin-top:auto;font-size:11px;color:var(--dim)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--acc);color:#fff;padding:10px 20px;border-radius:var(--r-sm);font-size:13px;font-weight:600;z-index:300;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+.hr{height:1px;background:var(--brd);margin:28px 0}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:700px){.cols2,.cols2 + .cols2{grid-template-columns:1fr}.view-title{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <button class="mobile-toggle" id="mobileToggle">☰</button>
+  <div class="overlay" id="overlay"></div>
+
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h1><span class="dot"></span>POD Playbook</h1>
+      <p>Automatisierter Print-on-Demand Etsy-Shop · DE</p>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Start</div>
+      <div class="nav-item active" data-view="start"><span class="nav-icon">◉</span>Übersicht</div>
+      <div class="nav-item" data-view="workflow"><span class="nav-icon">⇄</span>Der Workflow</div>
+      <div class="nav-item" data-view="recht"><span class="nav-icon">§</span>Recht &amp; Marken</div>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-group">
+      <div class="nav-label">Architektur</div>
+      <div class="nav-item" data-view="a"><span class="nav-icon">A</span>Tool-Architektur</div>
+      <div class="nav-item" data-view="b"><span class="nav-icon">B</span>No-Code</div>
+      <div class="nav-item" data-view="c"><span class="nav-icon">C</span>Günstig</div>
+      <div class="nav-item" data-view="d"><span class="nav-icon">D</span>Anfänger (halbauto.)</div>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-group">
+      <div class="nav-label">Umsetzung</div>
+      <div class="nav-item" data-view="e"><span class="nav-icon">E</span>30-Tage-Plan</div>
+      <div class="nav-item" data-view="i"><span class="nav-icon">I</span>Go-Live Check<span class="nav-badge" id="checkBadge">0/0</span></div>
+      <div class="nav-item" data-view="j"><span class="nav-icon">J</span>Sheet-Struktur</div>
+      <div class="nav-item" data-view="scale"><span class="nav-icon">↗</span>Skalierung 50–200/Tag</div>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-group">
+      <div class="nav-label">Content</div>
+      <div class="nav-item" data-view="f"><span class="nav-icon">F</span>100 Design-Ideen</div>
+      <div class="nav-item" data-view="g"><span class="nav-icon">G</span>20 Listing-Beispiele</div>
+      <div class="nav-item" data-view="h"><span class="nav-icon">H</span>Bild-Prompts</div>
+    </div>
+
+    <div class="app-footer">
+      Strategie-Playbook · kein Rechtsrat. Marken/Urheberrecht selbst final prüfen.
+    </div>
+  </nav>
+
+  <main class="main" id="main">
+
+    <!-- ===================== START ===================== -->
+    <div class="view active" id="v-start">
+      <div class="kicker">Technischer Co-Founder · Print-on-Demand</div>
+      <h2 class="view-title">Dein automatisierter Etsy-POD-Shop</h2>
+      <p class="view-sub">Komplette Schritt-für-Schritt-Architektur: von der Nische über KI-Design und Mockups bis zum automatischen Listing &amp; Druck-auf-Bestellung. Fokus: deutsche Zielgruppe, 100 % markenfrei, skalierbar auf 50–200 Listings/Tag.</p>
+
+      <div class="stat-row">
+        <div class="stat"><div class="stat-num acc">10</div><div class="stat-label">Pipeline-Schritte</div></div>
+        <div class="stat"><div class="stat-num acc">4</div><div class="stat-label">Setup-Varianten</div></div>
+        <div class="stat"><div class="stat-num acc">100</div><div class="stat-label">Design-Ideen</div></div>
+        <div class="stat"><div class="stat-num acc">0 €</div><div class="stat-label">Lagerkosten (POD)</div></div>
+      </div>
+
+      <div class="tip ok">
+        <h4>Das Grundprinzip: Print-on-Demand</h4>
+        <p class="muted">Du legst nur das <strong>Design + Listing</strong> an. Produziert &amp; versendet wird erst, <strong>wenn ein Kunde kauft</strong>. Kein Lager, kein Vorab-Invest pro Produkt, kein Risiko bei unverkauften Shirts. Deine Marge = Verkaufspreis − (Druckkosten + Versand + Etsy-Gebühren).</p>
+      </div>
+
+      <h3>Die 10 Schritte der Pipeline</h3>
+      <div class="grid g2">
+        <div class="card card-accent"><h4>1 · Nischenrecherche</h4><p class="muted">Profitable, evergreen Mikro-Nischen mit klarer Käufer-Emotion finden (Geschenk-Anlässe).</p></div>
+        <div class="card card-accent"><h4>2 · Design-Ideen</h4><p class="muted">Pro Nische 10–30 Konzepte: Motiv-Richtung + Stil + Zielperson.</p></div>
+        <div class="card card-accent"><h4>3 · Sprüche / Claims</h4><p class="muted">Deutsche, eigenständige Texte – witzig, emotional oder Stolz-/Identitäts-basiert.</p></div>
+        <div class="card card-accent"><h4>4 · Design-Erstellung</h4><p class="muted">PNG (transparent, 300 DPI) &amp; SVG via Ideogram/Midjourney/Canva/Vektorisierung.</p></div>
+        <div class="card card-accent"><h4>5 · Mockups</h4><p class="muted">Realistische Shirt-Vorschauen (Printify-Mockup-Generator, Placeit, Canva).</p></div>
+        <div class="card card-accent"><h4>6 · Etsy-Listing</h4><p class="muted">Automatisch via Printify→Etsy Sync oder Etsy-API anlegen.</p></div>
+        <div class="card card-accent"><h4>7 · SEO</h4><p class="muted">Titel, 13 Tags, Beschreibung – keyword-optimiert für die DE-Suche.</p></div>
+        <div class="card card-accent"><h4>8 · POD-Anbindung</h4><p class="muted">Printify oder Printful als Produzent &amp; Versand (Druck auf Bestellung).</p></div>
+        <div class="card card-accent"><h4>9 · Automatisierung</h4><p class="muted">Make.com / n8n / Zapier verbinden alle Schritte zu einer Pipeline.</p></div>
+        <div class="card card-accent"><h4>10 · QA + Skalierung</h4><p class="muted">Qualitäts-Gate vor Veröffentlichung, dann Durchsatz auf 50–200/Tag hochfahren.</p></div>
+      </div>
+
+      <div class="tip">
+        <h4>Wie du dieses Playbook nutzt</h4>
+        <p class="muted">1) Lies <strong>„Der Workflow"</strong> für das große Ganze. 2) Wähle eine Setup-Variante (A–D) je nach Budget/Skill. 3) Arbeite den <strong>30-Tage-Plan (E)</strong> ab. 4) Nutze <strong>F/G/H</strong> als sofort einsetzbares Content-Material. 5) Jedes Design muss die <strong>Go-Live-Checkliste (I)</strong> bestehen. 6) Verwalte alles im <strong>Sheet (J)</strong>.</p>
+      </div>
+    </div>
+
+    <!-- ===================== WORKFLOW ===================== -->
+    <div class="view" id="v-workflow">
+      <div class="kicker">Das Zielbild</div>
+      <h2 class="view-title">Der konkrete End-to-End-Workflow</h2>
+      <p class="view-sub">Claude → Design-Prompt → Bildtool → Mockup → Etsy → Printify → Verkauf. So fließt eine Idee bis zum verkauften Shirt.</p>
+
+      <div class="flow">
+        <div class="flow-step"><div class="n">SCHRITT 1</div><h4>Claude</h4><p>Nische + 10 Claims + SEO-Titel/Tags/Beschreibung + Bild-Prompt generieren.</p></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="n">SCHRITT 2</div><h4>Design-Prompt</h4><p>Optimierter Prompt für „nur Text/Grafik, transparenter Hintergrund".</p></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="n">SCHRITT 3</div><h4>Bildtool</h4><p>Ideogram/Midjourney → PNG. Bei Bedarf Vektorisierung zu SVG.</p></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="n">SCHRITT 4</div><h4>Mockup</h4><p>Printify-Mockups / Placeit – 4–6 Varianten pro Shirt.</p></div>
+      </div>
+      <div class="flow">
+        <div class="flow-step"><div class="n">SCHRITT 5</div><h4>Etsy</h4><p>Listing mit Titel, Tags, Bildern, Preis – via Printify-Sync.</p></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="n">SCHRITT 6</div><h4>Printify</h4><p>Produkt verknüpft mit Blueprint + Druckanbieter (DE/EU).</p></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="n">SCHRITT 7</div><h4>Verkauf</h4><p>Kunde kauft → Printify druckt &amp; versendet automatisch → Auszahlung.</p></div>
+      </div>
+
+      <h3>Schritt-für-Schritt im Detail</h3>
+
+      <div class="acc-item open">
+        <div class="acc-head">1 · Claude: Ideen &amp; Texte <span class="chev">›</span></div>
+        <div class="acc-body">
+          <p class="muted">Du gibst Claude die Nische + Zielperson + Anlass. Claude liefert in einem Rutsch: 10 Spruch-Varianten, den besten SEO-Titel, 13 Tags, eine Beschreibung und einen fertigen Bild-Prompt. Diese Outputs wandern in dein Sheet (Spalten siehe Abschnitt J).</p>
+          <p class="muted">→ Vorlage-Prompt: siehe <strong>Abschnitt H · „Claude Master-Prompt"</strong>.</p>
+        </div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-head">2 · Design-Prompt aufbereiten <span class="chev">›</span></div>
+        <div class="acc-body"><p class="muted">Claude-Prompt enthält bereits die wichtigen Schlüsselwörter: <code>typographic t-shirt design</code>, <code>transparent background</code>, <code>vector style</code>, <code>centered</code>, <code>high contrast</code>, <code>no mockup</code>. Sprache des aufgedruckten Texts = Deutsch. Achte darauf, dass das Bildtool deutsche Umlaute korrekt rendert (sonst Text separat in Canva setzen).</p></div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-head">3 · Bildtool → PNG/SVG <span class="chev">›</span></div>
+        <div class="acc-body"><p class="muted">Ideogram ist am stärksten bei lesbarem Text. Midjourney bei Illustrationen. Exportiere mind. 4500×5400 px PNG mit <strong>transparentem Hintergrund</strong> (Ideogram „magic fill"/Hintergrund entfernen, oder remove.bg / Photopea). Für saubere Linien/SVG: vectorizer.ai oder Illustrator Image-Trace.</p></div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-head">4 · Mockup erzeugen <span class="chev">›</span></div>
+        <div class="acc-body"><p class="muted">Lade das PNG in Printify, positioniere es auf dem Blueprint (z. B. Unisex-Shirt). Printify generiert automatisch saubere Mockups in mehreren Farben. Für Lifestyle-Mockups (Model trägt Shirt) zusätzlich Placeit/Canva.</p></div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-head">5 · Etsy-Listing <span class="chev">›</span></div>
+        <div class="acc-body"><p class="muted">In Printify „Publish" → das Produkt wird mit Titel/Beschreibung/Tags/Mockups als Etsy-Listing angelegt (Etsy-Konto muss verknüpft sein). Titel/Tags ggf. noch im Etsy-Editor finalisieren (13 Tags voll ausnutzen).</p></div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-head">6 · Printify-Produktion <span class="chev">›</span></div>
+        <div class="acc-body"><p class="muted">Wähle einen Druckanbieter mit DE/EU-Lager (kurze Lieferzeit, keine Zoll-Überraschungen). Lege Preis &amp; Marge fest. Aktiviere ggf. Express-Versand-Profil.</p></div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-head">7 · Verkauf &amp; Fulfillment <span class="chev">›</span></div>
+        <div class="acc-body"><p class="muted">Kunde kauft auf Etsy → Bestellung geht automatisch an Printify → Druck &amp; Versand mit Tracking → Etsy zahlt dich aus, Printify zieht die Produktionskosten ein. Du machst nichts manuell außer Kundenservice.</p></div>
+      </div>
+
+      <div class="tip ok">
+        <h4>Voll automatisiert (mit Make.com / n8n)</h4>
+        <p class="muted">Trigger „neue Zeile im Sheet mit Status = freigegeben" → ruft Claude/Bild-API → speichert PNG in Drive → erstellt Printify-Produkt via API → published auf Etsy → schreibt Etsy-Link zurück ins Sheet. Mensch nur noch für QA-Freigabe. Details in Abschnitt A &amp; Skalierung.</p>
+      </div>
+    </div>
+
+    <!-- ===================== RECHT ===================== -->
+    <div class="view" id="v-recht">
+      <div class="kicker">Pflicht zuerst lesen</div>
+      <h2 class="view-title">Recht, Marken &amp; Urheberrecht</h2>
+      <p class="view-sub">Der häufigste Grund für Shop-Sperrungen bei Etsy sind Marken-/Urheberrechtsverstöße. Diese Regeln halten dich sauber. (Kein Rechtsrat – im Zweifel Anwalt/Recherche.)</p>
+
+      <div class="tip err">
+        <h4>Absolute No-Gos</h4>
+        <ul>
+          <li>Keine <strong>Marken-/Logo-Namen</strong> (Nike, Adidas, Disney, Marvel, Lego …) – auch nicht abgewandelt oder als Wortspiel.</li>
+          <li>Keine <strong>Film-, Serien-, Spiel-, Musik-Zitate/Charaktere</strong> oder bekannte Slogans.</li>
+          <li>Keine <strong>Fußballvereine</strong>, Wappen, Vereinsfarben-Kombis, Stadt+„11"/„1900"-Designs, die einen Verein meinen.</li>
+          <li>Keine <strong>Promis/echte Personen</strong> (Gesicht, Name, Karikatur, Unterschrift).</li>
+          <li>Keine <strong>geschützten Sprüche</strong> (z. B. als Wortmarke eingetragene Claims) – siehe DPMA/EUIPO-Check.</li>
+          <li>Keine <strong>fremden Kunstwerke/Fotos/Schriftarten</strong> ohne kommerzielle Lizenz.</li>
+        </ul>
+      </div>
+
+      <div class="cols2">
+        <div class="card card-ok">
+          <h4>Sicher erlaubt (mit Sorgfalt)</h4>
+          <ul>
+            <li>Eigene, generische deutsche Sprüche &amp; Wortspiele</li>
+            <li>Berufe/Hobbys/Rollen als <em>Gattungsbegriff</em> („Krankenschwester", „Angler")</li>
+            <li>Jahreszahlen/Geburtsjahre („1985", „Jahrgang 1990")</li>
+            <li>Generische Symbole (Pfote, Hantel, Werkzeug, Controller-Form)</li>
+            <li>Selbst erstellte oder lizenzfreie Grafiken/Fonts (kommerzielle Lizenz!)</li>
+          </ul>
+        </div>
+        <div class="card card-warn">
+          <h4>Vorsicht / prüfen</h4>
+          <ul>
+            <li>Sprüche, die zufällig eine eingetragene Wortmarke sein könnten</li>
+            <li>Fonts mit unklarer Lizenz (nur „SIL OFL"/„Apache"/gekaufte Commercial-Lizenz nutzen)</li>
+            <li>KI-Bilder, die unbeabsichtigt Logos/Charaktere „halluzinieren" → wegretuschieren</li>
+            <li>Flaggen/religiöse/politische Symbole (Plattform-Policy beachten)</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Dein 4-Punkte-Marken-Check (vor jedem Go-Live)</h3>
+      <ol>
+        <li><strong>Wortmarken-Check:</strong> Spruch bei <a href="https://www.tmdn.org/tmview/" target="_blank" rel="noopener">TMview</a> / <a href="https://register.dpma.de/" target="_blank" rel="noopener">DPMA</a> / <a href="https://www.tmdn.org/tmview/" target="_blank" rel="noopener">EUIPO</a> suchen – existiert er als eingetragene Marke in Klasse 25 (Bekleidung)? Wenn ja → verwerfen.</li>
+        <li><strong>Bild-Check:</strong> Keine Logos, Charaktere, Wappen, echten Gesichter im Design? KI-Artefakte entfernt?</li>
+        <li><strong>Font-/Asset-Lizenz:</strong> Schrift &amp; Grafiken kommerziell lizenziert (Beleg im Sheet)?</li>
+        <li><strong>Reverse-Image-Check (optional):</strong> Google-Bilder-Rückwärtssuche, um versehentliche Kopien fremder Designs auszuschließen.</li>
+      </ol>
+
+      <div class="tip">
+        <h4>Rechtliches Drumherum (DE)</h4>
+        <p class="muted">Für gewerblichen Verkauf in DE/EU brauchst du i. d. R.: <strong>Gewerbeanmeldung</strong>, ggf. <strong>Kleinunternehmerregelung (§19 UStG)</strong> oder USt-Pflicht, ein <strong>Impressum</strong> &amp; <strong>Datenschutzerklärung</strong> im Shop, Hinweis auf <strong>Widerrufsrecht</strong> (Achtung: personalisierte Ware ist teils ausgenommen) und Beachtung des <strong>VerpackG</strong>/LUCID. Das ist kein Rechtsrat – kläre Details mit Steuerberater/IHK.</p>
+      </div>
+    </div>
+
+    <!-- ===================== A: TOOL-ARCHITEKTUR ===================== -->
+    <div class="view" id="v-a">
+      <div class="kicker">A) Beste Tool-Architektur</div>
+      <h2 class="view-title">Die empfohlene Tool-Architektur</h2>
+      <p class="view-sub">Der „Pro"-Stack: maximale Automatisierung bei vertretbaren Kosten. Optimiert für Durchsatz und saubere QA.</p>
+
+      <div class="table-wrap">
+      <table>
+        <thead><tr><th>Schritt</th><th>Empfohlenes Tool</th><th>Rolle</th></tr></thead>
+        <tbody>
+          <tr><td>Ideen/Text/SEO</td><td>Claude (+ ChatGPT als Backup)</td><td>Nischen, Claims, Titel, Tags, Beschreibung, Prompts</td></tr>
+          <tr><td>Keyword-Daten</td><td>eRank / Marmalead / Everbee</td><td>Etsy-Suchvolumen, Wettbewerb, Tag-Ideen</td></tr>
+          <tr><td>Bilderzeugung</td><td>Ideogram (Text) + Midjourney (Illu)</td><td>Design-PNG generieren</td></tr>
+          <tr><td>Freisteller/SVG</td><td>remove.bg / Photopea / vectorizer.ai</td><td>Transparenz &amp; Vektorisierung</td></tr>
+          <tr><td>Feinschliff/Text</td><td>Canva Pro / Kittl</td><td>Umlaute, Layout, Templates</td></tr>
+          <tr><td>Mockups</td><td>Printify-Mockups + Placeit</td><td>Produktbilder</td></tr>
+          <tr><td>POD &amp; Druck</td><td>Printify (Primär) / Printful</td><td>Produktion &amp; Versand on demand</td></tr>
+          <tr><td>Marktplatz</td><td>Etsy</td><td>Verkauf &amp; Reichweite</td></tr>
+          <tr><td>Automatisierung</td><td>Make.com (oder n8n self-hosted)</td><td>Orchestrierung der Pipeline</td></tr>
+          <tr><td>Datenbank/Verwaltung</td><td>Google Sheets (oder Airtable)</td><td>Single Source of Truth (Abschnitt J)</td></tr>
+          <tr><td>Speicher</td><td>Google Drive</td><td>PNG/SVG/Mockup-Ablage</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>Architektur-Diagramm (Datenfluss)</h3>
+      <div class="card">
+<pre style="white-space:pre-wrap;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:#cbd5e1;line-height:1.7">
+ [Google Sheet]  ── Idee/Status ──►  [Make.com Szenario]
+        ▲                                   │
+        │ Etsy-Link/Status                  ├─► Claude API  → Claims + SEO + Prompt
+        │                                   ├─► Ideogram/MJ API → PNG  → [Google Drive]
+        │                                   ├─► remove.bg → transparentes PNG
+        │                                   ├─► Printify API → Produkt + Mockups
+        │                                   └─► Printify „Publish" → [Etsy Listing]
+        │                                                              │
+   [QA-Freigabe Mensch] ◄── Vorschau ───────────────────────────────┘
+                                   │
+                          Kunde kauft (Etsy) → Printify druckt & versendet
+</pre>
+      </div>
+
+      <div class="tip ok">
+        <h4>Warum dieser Stack</h4>
+        <p class="muted">Claude liefert die beste deutschsprachige Textqualität, Ideogram die beste Text-im-Bild-Lesbarkeit, Printify die größte Druckanbieter-Auswahl mit EU-Lagern, Make.com die flexibelsten APIs ohne Programmierkenntnisse. Google Sheets bleibt die zentrale Kommando-/Kontrollschicht – alles wird darüber gesteuert &amp; geprüft.</p>
+      </div>
+    </div>
+
+    <!-- ===================== B: NO-CODE ===================== -->
+    <div class="view" id="v-b">
+      <div class="kicker">B) No-Code-Version</div>
+      <h2 class="view-title">Komplett ohne Programmieren</h2>
+      <p class="view-sub">Maximale Automatisierung, aber nur mit Klick-Tools. Ideal, wenn du keine APIs/Code anfassen willst.</p>
+
+      <div class="table-wrap">
+      <table>
+        <thead><tr><th>Schritt</th><th>No-Code-Tool</th></tr></thead>
+        <tbody>
+          <tr><td>Ideen &amp; Text</td><td>Claude / ChatGPT (Web-Oberfläche)</td></tr>
+          <tr><td>Keywords</td><td>eRank (Browser)</td></tr>
+          <tr><td>Design</td><td>Ideogram &amp; Canva (beides Web-UI, Drag &amp; Drop)</td></tr>
+          <tr><td>Mockups</td><td>Printify-Mockup-Generator (eingebaut)</td></tr>
+          <tr><td>Listing</td><td>Printify → „Publish to Etsy" (1 Klick)</td></tr>
+          <tr><td>Automatisierung</td><td>Make.com „No-Code"-Szenarien mit fertigen App-Modulen</td></tr>
+          <tr><td>Bulk-Listing</td><td>Printify Bulk-Publish / „Product duplication"</td></tr>
+          <tr><td>Verwaltung</td><td>Google Sheets Vorlage (Abschnitt J)</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>No-Code-Ablauf (manuell-geklickt, ~10 Min/Listing)</h3>
+      <ol>
+        <li>In Claude den Master-Prompt einfügen → Claims + SEO + Bild-Prompt kopieren.</li>
+        <li>Bild-Prompt in Ideogram einfügen → bestes PNG herunterladen.</li>
+        <li>In Canva Hintergrund entfernen + deutsche Umlaute/Text final setzen → PNG export.</li>
+        <li>In Printify: neues Produkt → PNG hochladen → Mockups wählen.</li>
+        <li>Titel/Tags/Beschreibung aus Claude einfügen → „Publish to Etsy".</li>
+        <li>Im Sheet Status auf „live" setzen, Etsy-Link eintragen.</li>
+      </ol>
+
+      <div class="tip">
+        <h4>No-Code Teil-Automatisierung mit Make.com</h4>
+        <p class="muted">Auch ohne Code kannst du in Make.com fertige Module per Drag &amp; Drop verbinden: <code>Google Sheets (Watch Rows)</code> → <code>OpenAI/Anthropic</code> → <code>HTTP (Bild-API)</code> → <code>Google Drive (Upload)</code> → <code>Printify (Create Product)</code>. Du klickst die Verbindung zusammen, schreibst aber keinen Code. Start ggf. mit nur 1–2 Modulen und erweitere schrittweise.</p>
+      </div>
+    </div>
+
+    <!-- ===================== C: GÜNSTIG ===================== -->
+    <div class="view" id="v-c">
+      <div class="kicker">C) Günstige Version</div>
+      <h2 class="view-title">Minimal-Budget-Setup</h2>
+      <p class="view-sub">Starte mit nahezu 0 € Fixkosten. Du zahlst praktisch nur Etsy-Listing-Gebühren und Druckkosten beim Verkauf.</p>
+
+      <div class="table-wrap">
+      <table>
+        <thead><tr><th>Zweck</th><th>Günstige/Free-Option</th><th>Kosten</th></tr></thead>
+        <tbody>
+          <tr><td>Text/Ideen</td><td>Claude/ChatGPT Free-Tier</td><td>0 €</td></tr>
+          <tr><td>Keywords</td><td>eRank Free / Etsy-Autosuggest</td><td>0 €</td></tr>
+          <tr><td>Design</td><td>Ideogram Free + Canva Free</td><td>0 €</td></tr>
+          <tr><td>Freisteller</td><td>Photopea / remove.bg Free</td><td>0 €</td></tr>
+          <tr><td>Mockups</td><td>Printify-Mockups (eingebaut)</td><td>0 €</td></tr>
+          <tr><td>POD</td><td>Printify Free-Plan</td><td>0 € Fix</td></tr>
+          <tr><td>Marktplatz</td><td>Etsy</td><td>~0,20 $/Listing + Verkaufsgebühr</td></tr>
+          <tr><td>Automatisierung</td><td>Make.com Free (1.000 Ops/Monat)</td><td>0 €</td></tr>
+          <tr><td>Verwaltung</td><td>Google Sheets</td><td>0 €</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="tip ok">
+        <h4>Spar-Strategie</h4>
+        <ul>
+          <li>Erst mit <strong>Free-Tiers validieren</strong>, ob Designs sich verkaufen. Upgrades (Canva Pro, Ideogram, eRank, Make-Bezahlplan) erst kaufen, wenn die ersten Verkäufe sie finanzieren.</li>
+          <li><strong>Etsy-Listing-Gebühr</strong> (~0,20 $/Listing, 4 Monate gültig) ist der einzige echte Stückkostenfaktor vor dem Verkauf → mit Bedacht listen.</li>
+          <li>Drucke <strong>kein Musterprodukt</strong> für jedes Design – nur für deine Bestseller ein physisches Sample.</li>
+          <li>Nutze <strong>ein Basisprodukt</strong> (z. B. ein Unisex-Shirt) statt zehn verschiedener Blueprints → weniger Komplexität.</li>
+        </ul>
+      </div>
+      <div class="tip warn">
+        <h4>Realistische Kostenwahrheit</h4>
+        <p class="muted">„Günstig" heißt günstige Fixkosten – nicht kostenlos. Plane Budget für: Etsy-Listing-Gebühren bei vielen Listings, ggf. Etsy-Ads zum Anschieben, und mind. ein Tool-Upgrade, sobald du skalierst (Free-Limits bei Ideogram/Make werden bei Volumen schnell zu eng).</p>
+      </div>
+    </div>
+
+    <!-- ===================== D: ANFÄNGER ===================== -->
+    <div class="view" id="v-d">
+      <div class="kicker">D) Halbautomatisch für Anfänger</div>
+      <h2 class="view-title">Der einfache Einstieg</h2>
+      <p class="view-sub">Kein Make.com, keine API. Du machst die kreativen Schritte selbst, Tools übernehmen nur das Lästige. Ziel: erstes Listing heute, Routine in einer Woche.</p>
+
+      <div class="flow">
+        <div class="flow-step"><div class="n">DU</div><h4>1. Claude</h4><p>Master-Prompt → Claims + SEO + Bild-Prompt kopieren.</p></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="n">DU</div><h4>2. Ideogram</h4><p>Prompt einfügen, bestes Bild wählen.</p></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="n">DU</div><h4>3. Canva</h4><p>Freistellen, Umlaute fixen, PNG export.</p></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="n">TOOL</div><h4>4. Printify</h4><p>Upload, Mockups, Publish to Etsy.</p></div>
+      </div>
+
+      <h3>Dein erstes Listing in 7 Schritten</h3>
+      <ol>
+        <li>Etsy-Verkäuferkonto + Printify-Konto erstellen und <strong>verbinden</strong>.</li>
+        <li><strong>Eine</strong> Nische wählen (z. B. „Hundebesitzer") – siehe Abschnitt F.</li>
+        <li>Claude-Master-Prompt nutzen → 1 starken Spruch + SEO + Bild-Prompt nehmen.</li>
+        <li>Ideogram → PNG generieren; in Canva freistellen &amp; Text sauber setzen.</li>
+        <li>Printify: Produkt anlegen, PNG platzieren, 3–4 Farben, Mockups generieren.</li>
+        <li>Titel/Tags/Beschreibung einfügen, Preis setzen (Marge ~40–50 %), publishen.</li>
+        <li>Go-Live-Checkliste (Abschnitt I) durchgehen, dann ins Sheet eintragen.</li>
+      </ol>
+
+      <div class="tip">
+        <h4>Anfänger-Tempo</h4>
+        <p class="muted">Woche 1: 1–3 Listings/Tag, Fokus auf <strong>sauber lernen</strong> statt Masse. Woche 2–4: 5–10/Tag, wenn der Ablauf sitzt. Erst danach über Voll-Automatisierung (Variante A) nachdenken. Lieber 20 saubere Listings als 200 mit Fehlern, die Etsy abstraft.</p>
+      </div>
+      <div class="tip ok">
+        <h4>Was du als Anfänger NICHT brauchst</h4>
+        <p class="muted">Keine eigene Domain, kein Webshop, keine bezahlte Software am Tag 1, kein Lager, kein Code. Nur: Etsy + Printify + Claude + Ideogram + Canva (alle mit Free-Einstieg).</p>
+      </div>
+    </div>
+
+    <!-- ===================== E: 30-TAGE-PLAN ===================== -->
+    <div class="view" id="v-e">
+      <div class="kicker">E) 30-Tage-Plan</div>
+      <h2 class="view-title">Konkreter Tagesplan für die ersten 30 Tage</h2>
+      <p class="view-sub">Von 0 zu einem laufenden, teil-automatisierten Shop. Realistisch mit ~1–3 h/Tag.</p>
+
+      <h3>Woche 1 · Fundament &amp; erstes Listing</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Tag</th><th>Aufgabe</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Etsy- &amp; Printify-Konto erstellen, verbinden, Shop-Basics (Name, Avatar, Banner, Versandprofil DE/EU).</td></tr>
+          <tr><td>2</td><td>Rechtliches klären: Gewerbe/Impressum/Steuer (Abschnitt Recht). 3 Nischen aus Abschnitt F festlegen.</td></tr>
+          <tr><td>3</td><td>eRank/Etsy-Suche: 20 Keywords je Nische sammeln. Sheet (Abschnitt J) aufsetzen.</td></tr>
+          <tr><td>4</td><td>Claude-Master-Prompt testen → 10 Claims + SEO für Nische 1. Bild-Prompts erstellen.</td></tr>
+          <tr><td>5</td><td>Ideogram + Canva lernen: 3 Designs bauen (PNG transparent, 4500×5400).</td></tr>
+          <tr><td>6</td><td>Printify-Produkt anlegen, Mockups, erstes Listing veröffentlichen (Go-Live-Check!).</td></tr>
+          <tr><td>7</td><td>Review: Ablauf dokumentieren, Engpässe notieren. Ziel: 3–5 Listings live.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Woche 2 · Routine &amp; Volumen</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Tag</th><th>Aufgabe</th></tr></thead>
+        <tbody>
+          <tr><td>8–9</td><td>Design-Templates in Canva anlegen (1 Layout, austauschbarer Spruch) → Tempo verdoppeln.</td></tr>
+          <tr><td>10–11</td><td>Nische 2 &amp; 3 bearbeiten. Ziel: 5 Listings/Tag. SEO-Qualität konstant halten.</td></tr>
+          <tr><td>12</td><td>Erste Etsy-Analytics ansehen: Welche Tags bringen Impressions? Sheet pflegen.</td></tr>
+          <tr><td>13</td><td>Mini-Etsy-Ads-Budget (z. B. 1–3 €/Tag) auf 5 beste Listings testen.</td></tr>
+          <tr><td>14</td><td>Review: 20–30 Listings live. Top-Performer markieren.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Woche 3 · Automatisierung einführen</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Tag</th><th>Aufgabe</th></tr></thead>
+        <tbody>
+          <tr><td>15–16</td><td>Make.com-Szenario 1: Sheet → Claude → SEO automatisch generieren lassen.</td></tr>
+          <tr><td>17–18</td><td>Make.com-Szenario 2: Bild-API → Drive-Upload automatisieren (Variante A).</td></tr>
+          <tr><td>19–20</td><td>Printify-Create-Product via Make testen (zuerst Entwurf, nicht direkt live).</td></tr>
+          <tr><td>21</td><td>Review: QA-Gate definieren (Abschnitt I), Mensch bleibt Freigabe-Instanz.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Woche 4 · Skalieren &amp; optimieren</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Tag</th><th>Aufgabe</th></tr></thead>
+        <tbody>
+          <tr><td>22–24</td><td>Pipeline auf 20–30 Listings/Tag hochfahren. Bestseller-Nischen verdoppeln.</td></tr>
+          <tr><td>25–26</td><td>Underperformer überarbeiten (neue Tags/Mockups/Titel A-B-testen).</td></tr>
+          <tr><td>27–28</td><td>Saisonale Pipeline planen (z. B. Weihnachten/Vatertag) 6–8 Wochen im Voraus.</td></tr>
+          <tr><td>29</td><td>Kennzahlen-Review: Conversion, Impressions, Marge, Retouren. Sheet-Dashboard.</td></tr>
+          <tr><td>30</td><td>Plan für Monat 2: Ziel 50–100/Tag, Tool-Upgrades finanzieren, QA verfeinern.</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="tip ok"><h4>Nordstern für die 30 Tage</h4><p class="muted">Ende Woche 1: erste Listings live. Ende Woche 2: Routine + 20–30 Listings. Ende Woche 3: Teil-Automatisierung läuft. Ende Woche 4: skalierbarer, halb-automatischer Shop mit ersten Verkäufen.</p></div>
+    </div>
+
+    <!-- ===================== I: CHECKLISTE ===================== -->
+    <div class="view" id="v-i">
+      <div class="kicker">I) Qualitätskontrolle</div>
+      <h2 class="view-title">Go-Live-Checkliste: Wann ein Design online darf</h2>
+      <p class="view-sub">Kein Listing geht live, bevor alle Punkte abgehakt sind. Klick zum Abhaken – wird lokal gespeichert.</p>
+
+      <div class="legend">
+        <span><span class="dotc" style="background:var(--err)"></span>Recht (Pflicht)</span>
+        <span><span class="dotc" style="background:var(--acc)"></span>Design-Qualität</span>
+        <span><span class="dotc" style="background:var(--acc2)"></span>SEO/Listing</span>
+        <span><span class="dotc" style="background:var(--ok)"></span>Technik</span>
+      </div>
+      <button class="btn-ghost btn" id="resetChecks" style="margin-bottom:14px">Checkliste zurücksetzen</button>
+
+      <h3>Recht &amp; Marken (Pflicht)</h3>
+      <div id="check-recht"></div>
+      <h3>Design-Qualität</h3>
+      <div id="check-design"></div>
+      <h3>SEO &amp; Listing</h3>
+      <div id="check-seo"></div>
+      <h3>Technik &amp; Produkt</h3>
+      <div id="check-tech"></div>
+
+      <div class="tip"><h4>Faustregel</h4><p class="muted">Wenn auch nur <strong>ein Recht-Punkt</strong> unklar ist → nicht veröffentlichen. Ein gesperrter Shop kostet mehr als 100 verworfene Designs.</p></div>
+    </div>
+
+    <!-- ===================== J: SHEET ===================== -->
+    <div class="view" id="v-j">
+      <div class="kicker">J) Verwaltung</div>
+      <h2 class="view-title">Google-Sheets / Excel-Struktur</h2>
+      <p class="view-sub">Deine zentrale Steuerzentrale für alle Designs. Eine Zeile = ein Design. Lade die Vorlage als CSV herunter und importiere sie in Google Sheets/Excel.</p>
+
+      <button class="btn" id="downloadCsv">⬇ CSV-Vorlage herunterladen</button>
+      <button class="btn btn-ghost" id="downloadIdeasCsv" style="margin-left:10px">⬇ 100 Ideen als CSV</button>
+
+      <h3>Tab 1 · „Designs" (Hauptliste)</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Spalte</th><th>Inhalt</th><th>Beispiel</th></tr></thead>
+        <tbody>
+          <tr><td>ID</td><td>Eindeutige Nummer</td><td>D-0001</td></tr>
+          <tr><td>Status</td><td>idee / design / qa / freigegeben / live / pausiert</td><td>live</td></tr>
+          <tr><td>Nische</td><td>Zielgruppe/Kategorie</td><td>Hundebesitzer</td></tr>
+          <tr><td>Anlass</td><td>Geschenk-Kontext</td><td>Geburtstag</td></tr>
+          <tr><td>Zielperson</td><td>Wer kauft/trägt</td><td>Hundemama</td></tr>
+          <tr><td>Claim/Spruch</td><td>Aufgedruckter Text (DE)</td><td>Hauptsache Hund</td></tr>
+          <tr><td>Stil</td><td>Design-Richtung</td><td>Typo, minimal, schwarz</td></tr>
+          <tr><td>Bild-Prompt</td><td>Verwendeter Prompt</td><td>typographic design …</td></tr>
+          <tr><td>PNG-Link</td><td>Drive-URL transparentes PNG</td><td>drive.google…</td></tr>
+          <tr><td>SVG-Link</td><td>Vektor (optional)</td><td>drive.google…</td></tr>
+          <tr><td>Mockup-Link</td><td>Produktbilder</td><td>drive.google…</td></tr>
+          <tr><td>SEO-Titel</td><td>Etsy-Titel (≤140 Z.)</td><td>Hunde T-Shirt Damen …</td></tr>
+          <tr><td>Tags</td><td>13 Tags, kommagetrennt</td><td>hundemama, hund …</td></tr>
+          <tr><td>Beschreibung</td><td>Listing-Text</td><td>…</td></tr>
+          <tr><td>Printify-Produkt</td><td>Blueprint/ID</td><td>Unisex Tee #12</td></tr>
+          <tr><td>Preis</td><td>VK in €</td><td>24,99</td></tr>
+          <tr><td>Druckkosten</td><td>Printify-Kosten</td><td>9,80</td></tr>
+          <tr><td>Marge</td><td>VK − Kosten − Gebühren</td><td>≈ 10,50</td></tr>
+          <tr><td>Etsy-Link</td><td>Live-Listing-URL</td><td>etsy.com/listing/…</td></tr>
+          <tr><td>QA-geprüft</td><td>ja/nein + Datum</td><td>ja · 12.06.</td></tr>
+          <tr><td>Marken-Check</td><td>ok/offen</td><td>ok</td></tr>
+          <tr><td>Font-Lizenz</td><td>Quelle/Beleg</td><td>SIL OFL</td></tr>
+          <tr><td>Erstellt am</td><td>Datum</td><td>12.06.2026</td></tr>
+          <tr><td>Verkäufe</td><td>Anzahl</td><td>7</td></tr>
+          <tr><td>Notizen</td><td>Freitext</td><td>Bestseller, Variante testen</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Weitere Tabs</h3>
+      <div class="grid g2">
+        <div class="card card-accent"><h4>Tab 2 · Nischen</h4><p class="muted">Nische, Keywords, Suchvolumen, Wettbewerb, Saison, Priorität, Status.</p></div>
+        <div class="card card-accent"><h4>Tab 3 · Keywords</h4><p class="muted">Keyword, Quelle (eRank), Volumen, Konkurrenz, verwendet in IDs.</p></div>
+        <div class="card card-accent"><h4>Tab 4 · Prompts</h4><p class="muted">Prompt-Name, Tool, Prompt-Text, Erfolgsrate, Beispielbild.</p></div>
+        <div class="card card-accent"><h4>Tab 5 · Bestellungen/KPI</h4><p class="muted">Monat, Impressions, Besuche, Verkäufe, Umsatz, Marge, Conversion.</p></div>
+        <div class="card card-accent"><h4>Tab 6 · QA-Log</h4><p class="muted">ID, Prüfer, Datum, Ergebnis, beanstandete Punkte.</p></div>
+        <div class="card card-accent"><h4>Tab 7 · Assets/Lizenzen</h4><p class="muted">Font/Grafik, Quelle, Lizenztyp, Lizenz-Link/Beleg, kommerziell ok?</p></div>
+      </div>
+
+      <div class="tip"><h4>Status-Workflow im Sheet</h4><p class="muted"><code>idee → design → qa → freigegeben → live</code>. Make.com triggert nur bei <code>freigegeben</code>. So bleibt der Mensch das Qualitäts-Gate. Bedingte Formatierung färbt Status-Spalte automatisch.</p></div>
+    </div>
+
+    <!-- ===================== SKALIERUNG ===================== -->
+    <div class="view" id="v-scale">
+      <div class="kicker">11) Skalierung</div>
+      <h2 class="view-title">Skalierung auf 50–200 Listings/Tag</h2>
+      <p class="view-sub">Volumen kommt erst, wenn Qualität &amp; Recht-Prozess stabil sind. Sonst skalierst du Fehler &amp; riskierst Sperrung.</p>
+
+      <h3>Die 4 Skalierungs-Hebel</h3>
+      <div class="grid g2">
+        <div class="card card-accent"><h4>1 · Template-isierung</h4><p class="muted">1 Canva-Layout pro Nische, nur Spruch wird getauscht → 1 Design in &lt; 2 Min.</p></div>
+        <div class="card card-accent"><h4>2 · Batch-Generierung</h4><p class="muted">Claude erzeugt 50 Claims auf einmal; Make iteriert die Sheet-Zeilen automatisch.</p></div>
+        <div class="card card-accent"><h4>3 · API-Pipeline</h4><p class="muted">Bild-API + Printify-API + Etsy-Sync → keine Handarbeit pro Listing.</p></div>
+        <div class="card card-accent"><h4>4 · QA-Stichprobe</h4><p class="muted">Bei Volumen: 100 % Recht-Check (automatisierte Marken-Wortliste) + Stichprobe Optik.</p></div>
+      </div>
+
+      <h3>Durchsatz-Stufenplan</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Phase</th><th>Listings/Tag</th><th>Setup</th><th>Engpass</th></tr></thead>
+        <tbody>
+          <tr><td>Lernen</td><td>1–5</td><td>Manuell (Variante D)</td><td>Skill/Tempo</td></tr>
+          <tr><td>Routine</td><td>5–20</td><td>Templates + No-Code</td><td>Design-Zeit</td></tr>
+          <tr><td>Teil-Auto</td><td>20–50</td><td>Make.com Pipeline</td><td>QA-Freigabe</td></tr>
+          <tr><td>Voll-Auto</td><td>50–200</td><td>API + Bulk + Listenchecks</td><td>Etsy-Limits, Marken-QA</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="tip warn">
+        <h4>Risiken beim Skalieren</h4>
+        <ul>
+          <li><strong>Etsy-Limits:</strong> Neue Shops sollten nicht über Nacht 200 Listings dumpen → graduell hochfahren, sonst Risiko von Flags.</li>
+          <li><strong>Duplicate/Spam-Detection:</strong> Variiere Titel, Tags, Mockups – nicht 200× dasselbe Muster.</li>
+          <li><strong>Marken-Versehen bei Masse:</strong> automatische Blacklist (Marken/Vereine/Promis) im Make-Filter, der Claims mit verbotenen Begriffen blockt.</li>
+          <li><strong>Kosten:</strong> Bild-API + Make-Operations + Etsy-Listing-Gebühren steigen linear → Marge im Sheet überwachen.</li>
+        </ul>
+      </div>
+      <div class="tip ok"><h4>Goldene Regel</h4><p class="muted">Skaliere <strong>Nischen, die schon verkaufen</strong>. Lieber 200 Varianten in 5 funktionierenden Nischen als 200 Schüsse ins Blaue.</p></div>
+    </div>
+
+    <!-- ===================== F: 100 IDEEN ===================== -->
+    <div class="view" id="v-f">
+      <div class="kicker">F) Design-Ideen</div>
+      <h2 class="view-title">100 erste Design-Ideen (markenfrei, DE)</h2>
+      <p class="view-sub">100 Kern-Ideen + Gaming-Bonus, alle Sprüche eigenständig &amp; generisch – ohne Marken/Promis/Vereine. Filtere nach Nische oder suche nach Stichwort. Vor Go-Live trotzdem den Marken-Check machen.</p>
+      <div class="idea-tools">
+        <input class="search" id="ideaSearch" placeholder="Suche Spruch oder Nische…"/>
+      </div>
+      <div id="ideaChips"></div>
+      <div id="ideaList" style="margin-top:14px"></div>
+    </div>
+
+    <!-- ===================== G: LISTINGS ===================== -->
+    <div class="view" id="v-g">
+      <div class="kicker">G) Listing-Beispiele</div>
+      <h2 class="view-title">20 fertige Etsy-Listing-Beispiele</h2>
+      <p class="view-sub">Komplett mit SEO-Titel, 13 Tags &amp; Beschreibung. Direkt nutzbar (Marken-Check vor Veröffentlichung nicht vergessen). Tags ≤ 20 Zeichen, deutsch + ein paar englische Long-Tails.</p>
+      <div id="listingList"></div>
+    </div>
+
+    <!-- ===================== H: PROMPTS ===================== -->
+    <div class="view" id="v-h">
+      <div class="kicker">H) Prompts</div>
+      <h2 class="view-title">Prompts für Claude, Ideogram, Midjourney &amp; Canva</h2>
+      <p class="view-sub">Copy-paste-fertig. Platzhalter in [eckigen Klammern] ersetzen.</p>
+
+      <h3>Claude · Master-Prompt (Ideen + SEO + Bild-Prompt)</h3>
+      <div class="prompt-box">
+        <button class="copy-btn">Kopieren</button>
+        <pre>Du bist Experte für markenfreie Print-on-Demand T-Shirt-Designs und Etsy-SEO für den deutschen Markt.
+
+Nische: [z.B. Hundebesitzer]
+Zielperson: [z.B. Hundemama, 30-50]
+Anlass: [z.B. Geburtstagsgeschenk]
+Tonalität: [witzig / emotional / stolz]
+
+Liefere:
+1) 10 eigenständige deutsche Sprüche (kurz, T-Shirt-tauglich). KEINE Marken, Vereine, Promis, Film-/Serien-Zitate, keine eingetragenen Slogans.
+2) Für den BESTEN Spruch:
+   - 1 Etsy-SEO-Titel (max. 140 Zeichen, Keyword vorne, deutsch, ohne Keyword-Spam)
+   - genau 13 Etsy-Tags (je max. 20 Zeichen, deutsch + 2-3 englische Long-Tails), kommagetrennt
+   - 1 Beschreibung (3-5 Sätze, Nutzen + Anlass + Pflegehinweis-Platzhalter)
+3) 1 Bild-Prompt auf Englisch für Ideogram/Midjourney:
+   - "typographic t-shirt design", transparenter Hintergrund, vektorartig, zentriert, hoher Kontrast, KEIN Mockup, KEINE Logos/Marken
+   - der aufgedruckte deutsche Text exakt in Anführungszeichen
+
+Gib alles strukturiert mit Überschriften aus.</pre>
+      </div>
+
+      <h3>Ideogram · Text-Design (beste Lesbarkeit)</h3>
+      <div class="prompt-box">
+        <button class="copy-btn">Kopieren</button>
+        <pre>typographic t-shirt design, bold german text "[DEIN SPRUCH]", clean sans-serif and script mix, centered composition, high contrast, [accent color] on transparent background, vector style, sticker-like, crisp edges, print-ready, no mockup, no model, no logo, no trademark</pre>
+      </div>
+
+      <h3>Ideogram · Mit kleiner Illustration</h3>
+      <div class="prompt-box">
+        <button class="copy-btn">Kopieren</button>
+        <pre>t-shirt graphic, german quote "[DEIN SPRUCH]" with a simple flat-line [Motiv, z.B. dog paw] illustration above, minimal, 2-color, retro vintage badge style, transparent background, vector, print-ready, no mockup, no brand, no real person</pre>
+      </div>
+
+      <h3>Midjourney · Illustrativer Stil</h3>
+      <div class="prompt-box">
+        <button class="copy-btn">Kopieren</button>
+        <pre>t-shirt design, [Motiv] illustration with hand-lettered german text "[DEIN SPRUCH]", bold retro typography, limited color palette, flat vector, white background for easy cutout, centered, high detail lettering, no mockup, no logos --no photo, mockup, watermark, brand --ar 4:5 --style raw</pre>
+      </div>
+
+      <h3>Canva · KI-/Layout-Anweisung</h3>
+      <div class="prompt-box">
+        <button class="copy-btn">Kopieren</button>
+        <pre>Erstelle ein T-Shirt-Design (4500x5400 px, transparenter Hintergrund). Großer deutscher Schriftzug: "[DEIN SPRUCH]". Schriftmix aus fetter Sans-Serif + Handschrift-Akzent. Zentriert, hoher Kontrast, eine Akzentfarbe. Kleine schlichte Vektor-Illustration: [Motiv]. Keine Logos/Marken, kommerziell nutzbare Schrift. Druckfertig exportieren als PNG mit Transparenz.</pre>
+      </div>
+
+      <div class="tip warn"><h4>Umlaute-Warnung</h4><p class="muted">KI-Bildtools rendern ä/ö/ü/ß oft fehlerhaft. Workflow: Grafik/Hintergrund per KI, <strong>deutschen Text final in Canva</strong> mit lizenzierter Schrift setzen. So sind Umlaute garantiert korrekt.</p></div>
+      <div class="tip err"><h4>Pflicht in JEDEM Bild-Prompt</h4><p class="muted"><code>no logo, no trademark, no brand, no real person, no mockup</code> – und das Ergebnis trotzdem prüfen, da KI manchmal trotzdem markenähnliche Elemente erzeugt.</p></div>
+    </div>
+
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- NAVIGATION ---------- */
+function navigateTo(view){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
+  const el=document.getElementById("v-"+view); if(el)el.classList.add("active");
+  const nav=document.querySelector('.nav-item[data-view="'+view+'"]'); if(nav)nav.classList.add("active");
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("overlay").classList.remove("show");
+  document.querySelector(".main").scrollTop=0;
+  location.hash=view;
+}
+document.querySelectorAll(".nav-item").forEach(i=>i.addEventListener("click",()=>navigateTo(i.dataset.view)));
+document.getElementById("mobileToggle").addEventListener("click",()=>{
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("overlay").classList.toggle("show");
+});
+document.getElementById("overlay").addEventListener("click",()=>{
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("overlay").classList.remove("show");
+});
+if(location.hash){const v=location.hash.slice(1);if(document.getElementById("v-"+v))navigateTo(v);}
+
+/* ---------- ACCORDION ---------- */
+document.querySelectorAll(".acc-head").forEach(h=>h.addEventListener("click",()=>h.parentElement.classList.toggle("open")));
+
+/* ---------- TOAST ---------- */
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1600);}
+
+/* ---------- COPY BUTTONS ---------- */
+document.querySelectorAll(".copy-btn").forEach(b=>b.addEventListener("click",()=>{
+  const pre=b.parentElement.querySelector("pre");
+  navigator.clipboard.writeText(pre.innerText).then(()=>toast("Kopiert ✓")).catch(()=>toast("Kopieren fehlgeschlagen"));
+}));
+
+/* ---------- CHECKLISTE ---------- */
+const checks={
+  recht:[
+    ["Kein Marken-/Logoname im Design oder Titel","No-Go-Liste geprüft"],
+    ["Keine Vereine / Wappen / Promis / Charaktere",""],
+    ["Spruch in TMview/DPMA/EUIPO (Klasse 25) geprüft – keine Wortmarke",""],
+    ["Schrift &amp; Grafiken kommerziell lizenziert (Beleg im Sheet)",""],
+    ["KI-Artefakte (versehentliche Logos) entfernt",""]
+  ],
+  design:[
+    ["Text fehlerfrei – Umlaute ä/ö/ü/ß korrekt",""],
+    ["Auflösung ≥ 4500×5400 px, 300 DPI",""],
+    ["Hintergrund transparent (sauberer Freisteller)",""],
+    ["Hoher Kontrast – auf hellem UND dunklem Shirt lesbar",""],
+    ["Motiv mittig &amp; in korrekter Druckgröße platziert",""]
+  ],
+  seo:[
+    ["SEO-Titel ≤ 140 Z., Haupt-Keyword vorne",""],
+    ["Genau 13 Tags, je ≤ 20 Z., kein Duplikat",""],
+    ["Beschreibung mit Nutzen + Anlass + Pflegehinweis",""],
+    ["Mind. 4 Mockups (versch. Farben/Perspektiven)",""],
+    ["Kategorie &amp; Attribute korrekt gesetzt",""]
+  ],
+  tech:[
+    ["Druckanbieter mit DE/EU-Lager gewählt",""],
+    ["Preis gesetzt, Marge ≥ Zielwert geprüft",""],
+    ["Varianten (Größen/Farben) &amp; Versandprofil korrekt",""],
+    ["Testvorschau in Printify kontrolliert",""],
+    ["Status im Sheet auf freigegeben/live gesetzt",""]
+  ]
+};
+const checkColors={recht:"var(--err)",design:"var(--acc)",seo:"var(--acc2)",tech:"var(--ok)"};
+let checkState=JSON.parse(localStorage.getItem("podChecks")||"{}");
+function renderChecks(){
+  let total=0,done=0;
+  Object.keys(checks).forEach(cat=>{
+    const cont=document.getElementById("check-"+cat); cont.innerHTML="";
+    checks[cat].forEach((c,i)=>{
+      const key=cat+"-"+i; total++;
+      const checked=!!checkState[key]; if(checked)done++;
+      const div=document.createElement("label");
+      div.className="check"+(checked?" done":"");
+      div.style.borderLeft="3px solid "+checkColors[cat];
+      div.innerHTML='<input type="checkbox" '+(checked?"checked":"")+'><span class="ctext">'+c[0]+(c[1]?'<small>'+c[1]+'</small>':'')+'</span>';
+      div.querySelector("input").addEventListener("change",e=>{
+        checkState[key]=e.target.checked;localStorage.setItem("podChecks",JSON.stringify(checkState));renderChecks();
+      });
+      cont.appendChild(div);
+    });
+  });
+  document.getElementById("checkBadge").textContent=done+"/"+total;
+}
+document.getElementById("resetChecks").addEventListener("click",()=>{checkState={};localStorage.setItem("podChecks","{}");renderChecks();toast("Checkliste zurückgesetzt");});
+
+/* ---------- 100 DESIGN-IDEEN ---------- */
+const ideas=[
+  // Geburtstage / Jahrgänge (1-14)
+  ["Geburtstag","Legenden wurden 1985 geboren"],
+  ["Geburtstag","40 und kein bisschen leise"],
+  ["Geburtstag","Seit 1990 im Einsatz"],
+  ["Geburtstag","Vintage Baujahr 1980 – Originalteile"],
+  ["Geburtstag","30 sieht gut aus an mir"],
+  ["Geburtstag","Geboren um zu glänzen – seit 1995"],
+  ["Geburtstag","50 Jahre jung geblieben"],
+  ["Jahrgang","Jahrgang 1975 – limitierte Auflage"],
+  ["Jahrgang","Made in 1988 – immer noch top"],
+  ["Jahrgang","Class of 1999"],
+  ["Jahrgang","Qualität aus 1970"],
+  ["Geburtstag","Heute wird gefeiert – Geburtstagskind"],
+  ["Geburtstag","60 – das beste Update bisher"],
+  ["Geburtstag","18 – endlich offiziell unverbesserlich"],
+  // Berufe (15-32)
+  ["Berufe","Krankenschwester aus Leidenschaft"],
+  ["Berufe","Erzieherin – Heldin ohne Umhang"],
+  ["Berufe","Vorsicht: Lehrerin mit Geduld am Limit"],
+  ["Berufe","Elektriker – ich bring Spannung rein"],
+  ["Berufe","Koch aus Berufung, Genießer aus Überzeugung"],
+  ["Berufe","Altenpflege – Herz im Dauereinsatz"],
+  ["Berufe","Friseurin – ich kann Wunder, keine Zauberei"],
+  ["Berufe","Bürokraft & Kaffee-Spezialistin"],
+  ["Berufe","Landwirt – mein Büro hat keine Wände"],
+  ["Berufe","Krankenpfleger im Schichtdienst-Modus"],
+  ["Berufe","Steuerberater – ich rette deine Zahlen"],
+  ["Berufe","Busfahrer – Fahrplan im Blut"],
+  ["Berufe","Bäcker seit 4 Uhr früh wach"],
+  ["Berufe","Logistik – ohne mich läuft nichts"],
+  ["Berufe","Verkäuferin mit Nervenstärke"],
+  ["Berufe","Programmierer – es ist kein Bug, es ist ein Feature"],
+  ["Berufe","Hebamme – ich hol die Kleinen ins Leben"],
+  ["Berufe","Maler – ich seh die Welt in Farben"],
+  // Hobbys (33-48)
+  ["Hobbys","Angeln ist kein Hobby, es ist Therapie"],
+  ["Hobbys","Gärtnern bis die Hände dreckig sind"],
+  ["Hobbys","Camping – mein Zuhause hat Räder"],
+  ["Hobbys","Kaffee zuerst, dann der Rest"],
+  ["Hobbys","Stricken statt Stress"],
+  ["Hobbys","Wandern – ich geh dann mal hoch"],
+  ["Hobbys","Motorrad – Freiheit auf zwei Rädern"],
+  ["Hobbys","Lesen ist meine Superkraft"],
+  ["Hobbys","Grillmeister im eigenen Garten"],
+  ["Hobbys","Fotografie – ich halt Momente fest"],
+  ["Hobbys","Imker – ich rede mit Bienen"],
+  ["Hobbys","Tanzen ist meine Sprache"],
+  ["Hobbys","Bergsteigen – oben ist meine Ruhe"],
+  ["Hobbys","Nähen – aus Stoff wird Liebe"],
+  ["Hobbys","Kochen ist Liebe, die man schmeckt"],
+  ["Hobbys","Schach – immer drei Züge voraus"],
+  // Mama / Papa (49-64)
+  ["Mama/Papa","Mama-Modus: immer an"],
+  ["Mama/Papa","Beste Mama der Welt – Originalausgabe"],
+  ["Mama/Papa","Papa – Held, Kumpel, Werkzeugkasten"],
+  ["Mama/Papa","Powermama mit Kaffee im Tank"],
+  ["Mama/Papa","Papa seit [Jahr] – Stolz inklusive"],
+  ["Mama/Papa","Mamas haben keine freien Tage"],
+  ["Mama/Papa","Bonuspapa – freiwillig der Beste"],
+  ["Mama/Papa","Oma – die mit den besten Keksen"],
+  ["Mama/Papa","Opa – Legende, Lehrer, Lausbub"],
+  ["Mama/Papa","Werdende Mama – Ladevorgang läuft"],
+  ["Mama/Papa","Papa-Bär beschützt sein Rudel"],
+  ["Mama/Papa","Mama von Chaoten – und stolz drauf"],
+  ["Mama/Papa","Erst Kaffee, dann Mama-Pflichten"],
+  ["Mama/Papa","Bonusmama mit ganzem Herzen"],
+  ["Mama/Papa","Opa-Modus: verwöhnen aktiviert"],
+  ["Mama/Papa","Beste Oma seit [Jahr]"],
+  // Hundebesitzer (65-78)
+  ["Hundebesitzer","Hauptsache Hund"],
+  ["Hundebesitzer","Hundemama mit Herz und Fell"],
+  ["Hundebesitzer","Mein Rudel, meine Regeln"],
+  ["Hundebesitzer","Erst der Hund, dann der Rest"],
+  ["Hundebesitzer","Gassi ist mein Cardio"],
+  ["Hundebesitzer","Hundepapa im Dauerdienst"],
+  ["Hundebesitzer","Leben ist besser mit Hund"],
+  ["Hundebesitzer","Pfoten weg von meinem Snack"],
+  ["Hundebesitzer","Mein Hund, mein bester Freund"],
+  ["Hundebesitzer","Fellnase statt Wecker"],
+  ["Hundebesitzer","Hundeliebe ist die ehrlichste Liebe"],
+  ["Hundebesitzer","Sorry, ich kann nicht – mein Hund braucht mich"],
+  ["Hundebesitzer","Team Vierbeiner"],
+  ["Hundebesitzer","Glück hat vier Pfoten"],
+  // Fitness (79-90)
+  ["Fitness","Heute ist Beintag – morgen Treppe vermeiden"],
+  ["Fitness","Schwitzen ist Fett, das weint"],
+  ["Fitness","Stark wird man im Kopf zuerst"],
+  ["Fitness","Eisen statt Ausreden"],
+  ["Fitness","Mein Hobby? Schwergewichte ärgern"],
+  ["Fitness","Kein Schmerz, kein Stolz"],
+  ["Fitness","Erst das Training, dann der Kuchen"],
+  ["Fitness","Gym ist günstiger als Therapie"],
+  ["Fitness","Diszipliniert, nicht motiviert"],
+  ["Fitness","Squat heute, stark für immer"],
+  ["Fitness","Laufen, bis der Kopf leer ist"],
+  ["Fitness","Powerfrau im Trainingsmodus"],
+  // Handwerker (91-100)
+  ["Handwerker","Handwerk hat goldenen Boden"],
+  ["Handwerker","Schrauber aus Leidenschaft"],
+  ["Handwerker","Tischler – ich mach Späne, keine Probleme"],
+  ["Handwerker","Maurer – Stein auf Stein, Tag für Tag"],
+  ["Handwerker","Mechaniker – ich höre, was dein Auto sagt"],
+  ["Handwerker","Dachdecker – ganz oben zuhause"],
+  ["Handwerker","Schweißer – ich verbinde, was zusammengehört"],
+  ["Handwerker","Klempner – ich rette deinen Tag"],
+  ["Handwerker","Werkzeug ist meine Liebessprache"],
+  ["Handwerker","Gemacht von Hand, gebaut mit Stolz"]
+];
+const gamingIdeas=[
+  ["Gaming","Erst zocken, dann reden"],
+  ["Gaming","Schlafen kann ich, wenn der Boss tot ist"],
+  ["Gaming","Pause? Ich bin mitten im Level"],
+  ["Gaming","Pro im Verlieren, Legende im Weitermachen"],
+  ["Gaming","Reallife? Schlechte Grafik, kein Respawn"],
+  ["Gaming","Kaffee laden… Spieler bereit"],
+  ["Gaming","Controller in der Hand, Sorgen vergessen"],
+  ["Gaming","Nur noch eine Runde (gelogen)"]
+];
+// merge gaming in (now 108 ideas across niches)
+const allIdeas=ideas.concat(gamingIdeas);
+const niches=[...new Set(allIdeas.map(i=>i[0]))];
+let activeNiche="Alle";
+function renderChips(){
+  const c=document.getElementById("ideaChips");c.innerHTML="";
+  ["Alle",...niches].forEach(n=>{
+    const ch=document.createElement("span");
+    ch.className="chip"+(n===activeNiche?" active":"");
+    ch.textContent=n;
+    ch.addEventListener("click",()=>{activeNiche=n;renderChips();renderIdeas();});
+    c.appendChild(ch);
+  });
+}
+function renderIdeas(){
+  const q=document.getElementById("ideaSearch").value.toLowerCase();
+  const list=document.getElementById("ideaList");list.innerHTML="";
+  let n=0;
+  allIdeas.forEach((it,idx)=>{
+    if(activeNiche!=="Alle"&&it[0]!==activeNiche)return;
+    if(q&&!(it[1].toLowerCase().includes(q)||it[0].toLowerCase().includes(q)))return;
+    n++;
+    const d=document.createElement("div");d.className="idea";
+    d.innerHTML='<div class="num">#'+(idx+1)+'</div><div><div class="claim">'+it[1]+'</div><div class="meta"><span class="tag tag-acc">'+it[0]+'</span></div></div>';
+    list.appendChild(d);
+  });
+  if(n===0)list.innerHTML='<p class="muted">Keine Treffer.</p>';
+}
+document.getElementById("ideaSearch").addEventListener("input",renderIdeas);
+
+/* ---------- 20 LISTINGS ---------- */
+const listings=[
+  {title:"Hundemama T-Shirt Damen | Hauptsache Hund | Geschenk Hundebesitzer",niche:"Hundebesitzer",claim:"Hauptsache Hund",tags:"hundemama,hund geschenk,hundebesitzer,fellnase,gassi shirt,hundeliebe,dog mom,frauchen,hunde shirt,tierliebe,geschenk frauchen,vierbeiner,hundespruch",desc:"Lustiges Hundemama-Shirt für alle, die ihr Frauchen-Herz tragen wollen. Perfektes Geschenk zum Geburtstag oder einfach so. Weicher Tragekomfort, Druck langlebig. Pflege: auf links bei 30°C waschen."},
+  {title:"Krankenschwester T-Shirt | Heldin ohne Umhang | Pflege Geschenk",niche:"Berufe",claim:"Krankenschwester aus Leidenschaft",tags:"krankenschwester,pflege geschenk,krankenpflege,heldin,gesundheitswesen,nurse shirt,pflegekraft,schwester geschenk,beruf shirt,danke pflege,stationsalltag,schichtdienst,pflegerin",desc:"Wertschätzendes Shirt für Krankenschwestern und Pflegekräfte. Ideales Dankeschön für Kolleginnen oder zum Examen. Angenehmer Stoff für lange Schichten. Pflege: auf links bei 30°C waschen."},
+  {title:"Geburtstag T-Shirt 1985 | Legenden wurden 1985 geboren | Jahrgang",niche:"Geburtstag",claim:"Legenden wurden 1985 geboren",tags:"1985 geburtstag,jahrgang 1985,40 geburtstag,geburtstagsshirt,legenden 1985,geschenk 40,vintage 1985,geburtstagskind,runder geburtstag,jahrgang shirt,40 jahre,geschenk mann,geschenk frau",desc:"Cooles Geburtstagsshirt zum Jahrgang 1985 – das perfekte Geschenk zum 40. Eigenständiger Spruch, hochwertiger Druck. Auch in anderen Jahrgängen erhältlich. Pflege: auf links bei 30°C waschen."},
+  {title:"Angeln T-Shirt Herren | Angeln ist Therapie | Geschenk Angler",niche:"Hobbys",claim:"Angeln ist kein Hobby, es ist Therapie",tags:"angeln shirt,angler geschenk,petri heil,angelshirt herren,hobby angeln,geschenk angler,fischen,angelsport,angler spruch,vatertag angeln,karpfen,geschenk papa,angeln therapie",desc:"Witziges Anglershirt für entspannte Stunden am Wasser. Tolles Geschenk für Hobby-Angler zum Geburtstag oder Vatertag. Bequemer Schnitt. Pflege: auf links bei 30°C waschen."},
+  {title:"Mama T-Shirt | Mama-Modus immer an | Geschenk Muttertag",niche:"Mama/Papa",claim:"Mama-Modus: immer an",tags:"mama shirt,muttertag geschenk,beste mama,powermama,mama spruch,geschenk mama,mama modus,mom shirt,mama leben,geschenk muttertag,mama des jahres,familienshirt,mami",desc:"Liebevolles Mama-Shirt für Powermütter im Dauereinsatz. Ideales Geschenk zum Muttertag oder Geburtstag. Weich und alltagstauglich. Pflege: auf links bei 30°C waschen."},
+  {title:"Papa T-Shirt | Held Kumpel Werkzeugkasten | Geschenk Vatertag",niche:"Mama/Papa",claim:"Papa – Held, Kumpel, Werkzeugkasten",tags:"papa shirt,vatertag geschenk,bester papa,papa spruch,geschenk papa,dad shirt,papa held,vatertag,geschenk vater,papa leben,familienshirt,papa des jahres,vati",desc:"Cooles Papa-Shirt für den besten Mann im Haus. Perfektes Geschenk zum Vatertag, Geburtstag oder zur Geburt. Robuster Druck. Pflege: auf links bei 30°C waschen."},
+  {title:"Fitness T-Shirt Herren | Eisen statt Ausreden | Gym Geschenk",niche:"Fitness",claim:"Eisen statt Ausreden",tags:"fitness shirt,gym shirt herren,bodybuilding,training shirt,eisen,kraftsport,gym motivation,fitnessstudio,geschenk sportler,workout,hantel,muskeln,gym spruch",desc:"Motivierendes Gym-Shirt für alle, die Eisen statt Ausreden wählen. Tolles Geschenk für Kraftsportler. Atmungsaktiver Tragekomfort. Pflege: auf links bei 30°C waschen."},
+  {title:"Elektriker T-Shirt | Ich bring Spannung rein | Handwerker Geschenk",niche:"Handwerker",claim:"Elektriker – ich bring Spannung rein",tags:"elektriker shirt,handwerker geschenk,elektriker spruch,elektro,geschenk elektriker,handwerk,beruf shirt,elektrotechnik,geselle,meister,azubi geschenk,strom,handwerker shirt",desc:"Humorvolles Elektriker-Shirt mit Wortwitz. Ideales Geschenk für Kollegen, Azubis oder zum Gesellenbrief. Strapazierfähig. Pflege: auf links bei 30°C waschen."},
+  {title:"Gaming T-Shirt | Nur noch eine Runde | Geschenk Gamer Zocker",niche:"Gaming",claim:"Nur noch eine Runde (gelogen)",tags:"gaming shirt,gamer geschenk,zocker,gaming spruch,konsole,geschenk gamer,videospiele,gaming leben,nerd shirt,zocken,gamer leben,geschenk teenager,controller",desc:"Lustiges Gaming-Shirt für echte Zocker. Perfektes Geschenk für Gamer zum Geburtstag oder Weihnachten. Bequem für lange Sessions. Pflege: auf links bei 30°C waschen."},
+  {title:"Erzieherin T-Shirt | Heldin ohne Umhang | Kita Geschenk",niche:"Berufe",claim:"Erzieherin – Heldin ohne Umhang",tags:"erzieherin shirt,kita geschenk,erzieherin spruch,kindergarten,geschenk erzieherin,pädagogin,heldin,erziehung,kita team,abschied erzieherin,beruf shirt,danke erzieherin,tagesmutter",desc:"Wertschätzendes Shirt für Erzieherinnen und Pädagoginnen. Schönes Dankeschön zum Abschied, Geburtstag oder als Team-Geschenk. Angenehm weich. Pflege: auf links bei 30°C waschen."},
+  {title:"Oma T-Shirt | Beste Oma mit den besten Keksen | Geschenk Omi",niche:"Mama/Papa",claim:"Oma – die mit den besten Keksen",tags:"oma shirt,oma geschenk,beste oma,omi spruch,geschenk oma,großmutter,oma leben,muttertag oma,oma des jahres,geschenk omi,enkel,familienshirt,großeltern",desc:"Herzliches Oma-Shirt zum Schmunzeln. Tolles Geschenk zum Muttertag, Geburtstag oder zur Geburt des Enkels. Weicher Stoff. Pflege: auf links bei 30°C waschen."},
+  {title:"Camping T-Shirt | Mein Zuhause hat Räder | Wohnmobil Geschenk",niche:"Hobbys",claim:"Camping – mein Zuhause hat Räder",tags:"camping shirt,wohnmobil,camper geschenk,camping spruch,wohnwagen,geschenk camper,outdoor,zelten,vanlife,reisen shirt,campingplatz,natur,roadtrip",desc:"Lockeres Camping-Shirt für Wohnmobil- und Zeltfans. Perfektes Geschenk für Camper und Reiselustige. Leicht und bequem. Pflege: auf links bei 30°C waschen."},
+  {title:"Jahrgang 1990 T-Shirt | Seit 1990 im Einsatz | Geburtstag Geschenk",niche:"Jahrgang",claim:"Seit 1990 im Einsatz",tags:"jahrgang 1990,1990 geburtstag,35 geburtstag,geburtstagsshirt,seit 1990,geschenk 35,vintage 1990,geburtstagskind,jahrgang shirt,runder geburtstag,geschenk mann,geschenk frau,1990",desc:"Lässiges Geburtstagsshirt zum Jahrgang 1990. Ideales Geschenk zum runden Geburtstag. Eigenständiger Spruch, hochwertiger Druck. Pflege: auf links bei 30°C waschen."},
+  {title:"Hundepapa T-Shirt | Glück hat vier Pfoten | Geschenk Herrchen",niche:"Hundebesitzer",claim:"Glück hat vier Pfoten",tags:"hundepapa,hund geschenk,herrchen,fellnase,gassi shirt,hundeliebe,dog dad,hundebesitzer,hunde shirt,vierbeiner,geschenk herrchen,pfoten,hundespruch",desc:"Charmantes Hundepapa-Shirt für stolze Herrchen. Perfektes Geschenk für Hundebesitzer zum Geburtstag. Bequemer Schnitt, langlebiger Druck. Pflege: auf links bei 30°C waschen."},
+  {title:"Gärtner T-Shirt | Gärtnern bis die Hände dreckig sind | Geschenk",niche:"Hobbys",claim:"Gärtnern bis die Hände dreckig sind",tags:"garten shirt,gärtner geschenk,gartenliebe,hobbygärtner,garten spruch,geschenk gärtner,pflanzen,gemüsebeet,gartenarbeit,grüner daumen,natur,gärtnerin,beete",desc:"Fröhliches Garten-Shirt für Hobbygärtner mit grünem Daumen. Tolles Geschenk zum Geburtstag oder Saisonstart. Robust und bequem. Pflege: auf links bei 30°C waschen."},
+  {title:"40. Geburtstag T-Shirt | 40 und kein bisschen leise | Geschenk",niche:"Geburtstag",claim:"40 und kein bisschen leise",tags:"40 geburtstag,geschenk 40,geburtstagsshirt,40 jahre,vierzig,runder geburtstag,geburtstagskind,geschenk frau,geschenk mann,40er,sprüche shirt,jubiläum,party",desc:"Freches Shirt zum 40. Geburtstag mit Augenzwinkern. Perfektes Geschenk für die Geburtstagsfeier. Eigenständiger Spruch. Pflege: auf links bei 30°C waschen."},
+  {title:"Tischler T-Shirt | Ich mach Späne keine Probleme | Handwerk",niche:"Handwerker",claim:"Tischler – ich mach Späne, keine Probleme",tags:"tischler shirt,schreiner,handwerker geschenk,tischler spruch,holz,geschenk tischler,handwerk,beruf shirt,möbelbau,geselle,meister,azubi geschenk,werkstatt",desc:"Witziges Tischler-/Schreiner-Shirt mit Wortspiel. Ideales Geschenk für Kollegen oder zum Gesellenbrief. Strapazierfähiger Druck. Pflege: auf links bei 30°C waschen."},
+  {title:"Fitness T-Shirt Damen | Powerfrau im Trainingsmodus | Gym",niche:"Fitness",claim:"Powerfrau im Trainingsmodus",tags:"fitness shirt damen,gym damen,powerfrau,training shirt,frauen fitness,kraftsport,gym motivation,fitnessstudio,geschenk sportlerin,workout,fit frau,gym spruch,sport",desc:"Motivierendes Damen-Gym-Shirt für starke Frauen. Schönes Geschenk für sportliche Freundinnen. Atmungsaktiv und figurfreundlich. Pflege: auf links bei 30°C waschen."},
+  {title:"Opa T-Shirt | Legende Lehrer Lausbub | Geschenk Großvater",niche:"Mama/Papa",claim:"Opa – Legende, Lehrer, Lausbub",tags:"opa shirt,opa geschenk,bester opa,opa spruch,geschenk opa,großvater,opa leben,opa des jahres,geschenk großvater,enkel,familienshirt,großeltern,opi",desc:"Liebevolles Opa-Shirt mit Schmunzelfaktor. Perfektes Geschenk zum Geburtstag oder zur Geburt des Enkels. Weicher, langlebiger Stoff. Pflege: auf links bei 30°C waschen."},
+  {title:"Koch T-Shirt | Kochen ist Liebe die man schmeckt | Geschenk",niche:"Hobbys",claim:"Kochen ist Liebe, die man schmeckt",tags:"koch shirt,kochen geschenk,hobbykoch,küche spruch,geschenk koch,kochliebe,küchenchef,kochen,grillen,geschenk hobbykoch,gourmet,leidenschaft,küche",desc:"Geschmackvolles Koch-Shirt für leidenschaftliche Hobbyköche. Tolles Geschenk für Küchenfans zum Geburtstag. Bequem und langlebig. Pflege: auf links bei 30°C waschen."}
+];
+function renderListings(){
+  const c=document.getElementById("listingList");c.innerHTML="";
+  listings.forEach((l,i)=>{
+    const d=document.createElement("div");d.className="listing";
+    d.innerHTML='<div class="lt">'+(i+1)+'. '+l.title+'</div>'+
+      '<div class="row"><b>Nische:</b> <span class="tag tag-acc">'+l.niche+'</span> &nbsp; <b>Claim:</b> '+l.claim+'</div>'+
+      '<div class="row"><b>Beschr.:</b> '+l.desc+'</div>'+
+      '<div class="tags-line"><b style="color:var(--mute)">13 Tags:</b> '+l.tags+'</div>';
+    c.appendChild(d);
+  });
+}
+
+/* ---------- CSV DOWNLOAD ---------- */
+function downloadFile(name,content){
+  const blob=new Blob([content],{type:"text/csv;charset=utf-8;"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();
+  toast("Download gestartet ✓");
+}
+document.getElementById("downloadCsv").addEventListener("click",()=>{
+  const headers=["ID","Status","Nische","Anlass","Zielperson","Claim/Spruch","Stil","Bild-Prompt","PNG-Link","SVG-Link","Mockup-Link","SEO-Titel","Tags (13, kommagetrennt)","Beschreibung","Printify-Produkt","Preis","Druckkosten","Marge","Etsy-Link","QA-geprüft","Marken-Check","Font-Lizenz","Erstellt am","Verkäufe","Notizen"];
+  const example=["D-0001","live","Hundebesitzer","Geburtstag","Hundemama","Hauptsache Hund","Typo minimal schwarz","typographic t-shirt design ...","","","","Hundemama T-Shirt Damen | Hauptsache Hund","hundemama,hund geschenk,...","Lustiges Hundemama-Shirt ...","Unisex Tee","24,99","9,80","10,50","","ja","ok","SIL OFL","12.06.2026","0","Bestseller-Kandidat"];
+  const csv=[headers.join(";"),example.join(";")].join("\n");
+  downloadFile("POD_Designs_Vorlage.csv","\ufeff"+csv);
+});
+document.getElementById("downloadIdeasCsv").addEventListener("click",()=>{
+  const rows=[["Nr","Nische","Claim/Spruch"].join(";")];
+  allIdeas.forEach((it,i)=>rows.push([(i+1),it[0],'"'+it[1].replace(/"/g,'""')+'"'].join(";")));
+  downloadFile("POD_100_Ideen.csv","\ufeff"+rows.join("\n"));
+});
+
+/* ---------- INIT ---------- */
+renderChecks();renderChips();renderIdeas();renderListings();
+</script>
+</body>
+</html>
